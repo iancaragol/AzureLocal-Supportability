@@ -4,8 +4,7 @@ This TSG covers workaround steps specific to addressing an issue Microsoft has i
 
 # Symptoms
 
-On deleting an Arc VM in the specified time frame (between Jan 31th, 2025 and Feb 2nd, 2025), the Arc VM no longer exists in Azure but continues to run on-premises.
-
+On deleting an Arc VM in the specified time frame (between Jan 31st, 2025 and Feb 2nd, 2025), the Arc VM no longer exists in Azure but continues to run on-premises.
 # Cause
 
 A misconfiguration on one of the cloud components prevented Arc VM delete operations from flowing down to the Arc resource bridge.
