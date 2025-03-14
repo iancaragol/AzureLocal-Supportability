@@ -10,41 +10,53 @@ Review output and remediate.", "Results": [ { "Name":
 "AzStackHci_Hardware_Test_Processor_Instance_Property_VMMonitorModeExtensions", 
 "DisplayName": "Test Processor Property VMMonitorModeExtensions
 ```
+or
+```Text
+{"code":"UpdateDeploymentSettingsDataFailed","message":"Deployment Settings validation failed.","details":
+[{"code":"UpdateDeploymentSettingsDataFailed",""message":"Failed to create deployment
+settings. \nValidation status is
+{Name=Azure Stack HCI Hardware, Description=Check hardware requirements, FullStepIndex=3,
+StartTimeUtc=xxx, EndTimeUtc=xxx, Status=Error, Exception=Type
+'ValidateHardware' of Role 'EnvironmentValidator' raised an exception:\"Message\":  \"Hardware requirements not met. 
+```
 
 # Issue Validation
-To confirm the scenario that you are encountering is the issue documented in this article, please run this cmdlet on each node to check the result:
+To confirm the scenario that you are encountering is the issue documented in this article, please go through below two steps:
+## 1. Verify "Virtualization-based security (VBS)" setting
+Run this cmdlet on each node to check the result:
 ```Powershell
 
 $result = SystemInfo | Select-String "Virtualization-based security"
-Write-Host "$result"
+Write-Host "VBS: $result"
 if ($result -eq "Virtualization-based security: Status: Not enabled" -or $result -eq "Virtualization-based security: Status: Enabled but not running") {
-    Write-Host "The known issue is hit. You can follow the below steps to mitigate the issue"
+    Write-Host "The VBS issue is hit. You can follow the below mitigation details section to mitigate the issue"
 }
 else {
-    Write-Host "This is not a known issue addressed in this article. Please skip the blow steps and reach out to CSS team for troubleshooting" 
+    Write-Host "No issue found in VBS setting" 
 }
 ```
-If you see the message "The known issue is hit" in a node, follow the below mitigation steps to resolve the issue on the node. Otherwise, if you do see the message "This is not a known issue addressed in this article" on all nodes, please skip below sections.
- 
-
+## 2. Verify Secure Boot setting
+Run this cmdlet on each node to check the result:
+```Powershell
+$secureBootEnabled = Confirm-SecureBootUEFI
+Write-Host "SecureBootEnable: $secureBootEnabled"
+if ($secureBootEnabled -eq $false) {
+    Write-Host "SecureBoot issue is hit. You can follow the below mitigation details section to mitigate the issue"
+}
+else {
+    Write-Host "SecureBoot is enabled. No issue found in SecureBoot setting"
+}
+```
+Note: if both steps don't detect any issue, this is not the issue addressed by this article. Please refer to [Evaluate the deployment readiness of your environment for Azure Local](https://learn.microsoft.com/en-us/azure/azure-local/manage/use-environment-checker?view=azloc-24113&tabs=connectivity)
 # Cause
-"Virtualization Technology" was not enabled on BIOS or was not enabled in registry.
+"Virtualization Technology" was not enabled on BIOS or SecureBoot is not enabled
 
 # Mitigation Details
 On each node where the issue is hit, follow below steps:
 
 1. Validate that BIOS setting of "Virtualization Technology" is enabled. If not, enable it in BIOS.
 
-2. If enabled, validate that the OS contains the below keys and create them if missing.
-
-```PowerShell
-
-reg add "HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" /v "Enabled" /t REG_DWORD /d 1 /f
-
-reg add "HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" /v "WasEnabledBy" /t REG_DWORD /d 0 /f
-
-reg add "HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\SystemGuard" /v "Enabled" /t REG_DWORD /d 1 /f
-```
+2. Validate that SecureBoot is enabled. If not enable it in BIOS
 
 3. Restart the node.
 
