@@ -7,7 +7,7 @@ Type 'CleanUpDeploymentPackageAndNugetStoreOnNonSeedNodes' of Role 'BareMeta
 Azure Local Cluster Deployment of 2411.3 (or earlier) fails after the Azure Local AzureEdgeLifecyleManager Extension was installed or updated to Version 30.2503.0.881.
 
 Verify if the **CloudCommon** folder exists in ```C:\Program Files\WindowsPowerShell\Modules\``` on non-seed nodes. If it does not exist, apply the below the mitigation.
-<br />*Seed node is typically the first node in the cluster during deployment.*
+<br />*"The seed node is usually the first node in the cluster during deployment. All other nodes are non-seed nodes*
 
 # Cause
 The missing CloudCommon folder on non-seed nodes is causing the deployment error when the latest (30.2503.0.881 AzureEdgeLifecyleManager Extension attempts deployment of 2411.3 (or earlier) builds of Azure Local.
