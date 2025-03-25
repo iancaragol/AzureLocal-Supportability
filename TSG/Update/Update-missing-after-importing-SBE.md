@@ -80,10 +80,19 @@ In that example, importing the SBE_Contoso_Gen3_4.1.2412.5 files will cause the 
 If the information of which SBE to download is not known to restore the cluster the following process can be used to return to the Step 1 state:
 
 1. Get the URI for the online SBE manifest:
+If your cluster has 10.2408.x or newer version installed, you can directly extract the URI from the following syntax:
 ```
 $diagnosticInfo = Get-SolutionDiscoveryDiagnosticInfo 3>$null 4>$null
 $diagnosticInfo.Configuration.ComponentUris["SBE"]
 ```
+
+If your cluster has a version lower than 10.2408.x (e.g. 10.2405.3.7), just select the URI from the following list that corresponds to your server manufacturer:
+- https://aka.ms/AzureStackSBEUpdate/DataON
+- https://aka.ms/AzureStackSBEUpdate/Dell
+- https://aka.ms/AzureStackSBEUpdate/HitachiVantara
+- https://aka.ms/AzureStackSBEUpdate/HPE   (use this if you have any other HPE model than DL380 Gen11 Integrated System)
+- https://aka.ms/AzureStackSBEUpdate/HPE-ProLiant-Standard  (use this if you have a DL380 Gen11 Integrated System)
+- https://aka.ms/AzureStackSBEUpdate/Lenovo
 
 2. Download the XML file (using your browser or preferred mechanism)
 Note: that URI will likely be a `https://aka.ms` based redirection address that will redirect to your hardware vendor's manifest publishing endpoint.
