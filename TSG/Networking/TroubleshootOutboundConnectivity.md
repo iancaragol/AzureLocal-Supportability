@@ -24,7 +24,7 @@ Azure Local includes built-in automation modules that are executed as part of So
 
 ## Additional diagnostic and support tools
 
-To provide further assistance for support, validation, testing or support request (SR) troubleshooting scenarios, a stand-alone PowerShell function called **Test-AzureLocalConnectivity** has been created and  published in the PowerShell Gallery. This tool can be used to validate connectivity to the required endpoints, the function generates output to the console and to a comma separated value (CSV) file on the node, that can be easily viewed in Excel, once copied from the node, and/or shared as a point in time status of the connectivity tests.
+To provide further assistance for support, validation, testing or support request (SR) troubleshooting scenarios, a stand-alone PowerShell function called **Test-AzureLocalConnectivity** has been created and  published in the PowerShell Gallery. This tool can be used to validate connectivity to the required endpoints, the function generates output to the console and to a comma separated value (CSV) file that can be easily viewed in Excel, once copied from the node, and/or shared as a point in time status of the connectivity tests.
 
 ## Issue Validation
 
