@@ -97,6 +97,9 @@ $Result = Get-SolutionUpdateEnvironment
 # View "not equal to SUCCESS" alerts
 $Result.HealthCheckResult | Where-Object {$_.Status -ne "SUCCESS"} | Format-List Title, Status, Severity, Description, Remediation
 
+# Create "C:\Temp" folder, if it does not exist
+if(-not(Test-Path "C:\Temp\")) { New-Item -Path "C:\Temp\" -Type Directory | Out-Null }
+
 # Output to Text format
 $Result.HealthCheckResult | Out-File "C:\Temp\HealthResult-$((Get-Cluster).Name).txt"
 
