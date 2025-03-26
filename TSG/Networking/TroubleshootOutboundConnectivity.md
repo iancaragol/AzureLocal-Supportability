@@ -72,7 +72,7 @@ Example output is shown in the animated GIF image below, which shows an interact
 
 The primary source of information is copying / exporting the CSV file that is generated from the node to your laptop or desktop PC to open the output in Excel, or another CSV file viewer.
 
-![alt text for screen readers](./images\Test-AzureLocalConnectivity_Demo.gif "Text to show on mouseover")
+![Test-AzureLocalConnectivity Demo](./images\Test-AzureLocalConnectivity_Demo.gif)
 
 ## Appendix
 
