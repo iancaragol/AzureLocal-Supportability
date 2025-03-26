@@ -32,7 +32,7 @@ If you are experiencing network related issues or failures, as per the examples 
 
 ## Mitigation Details
 
-To help with troubleshooting or root causing network connectivity issues, you can use the **Test-AzureLocalConnectivity** function which is included in the **AzStackHCI.DiagnosticSettings** module, to automate testing connectivity is working correctly from your Azure Local physical machines to the required public endpoints. The function supports Arc Gateway scenarios and has an "-AzureRegion" parameter to allow you to test against a specific Azure region that matches your Azure Local instance deployment.
+To help with troubleshooting or root causing network connectivity issues, you can use the **Test-AzureLocalConnectivity** function which is included in the **AzStackHCI.DiagnosticSettings** module. This function can help automate testing that connectivity is working correctly from your Azure Local physical machines to the required public endpoints. The function supports Arc Gateway scenarios and has an "-AzureRegion" parameter to allow you to test against a specific Azure region that matches your Azure Local instance deployment.
 
 The 'Test-AzureLocalConnectivity' function has a dependency on the Azure Local Environment Checker module being installed, which is installed by default on all Azure Local physical machines. If Environment Checker module (_AzStackHci.EnvironmentChecker_) is not installed on the device running the connectivity test, you will be prompted to install the module first. The device used to install the AzStackHCI.DiagnosticSettings module and test connectivity must have access to the PowerShell Gallery, in order to download the module (_nuget package_) to install it.
 
