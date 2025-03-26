@@ -30,7 +30,7 @@ To provide further assistance for support, validation, testing or support reques
 
 If you are experiencing network related issues or failures, as per the examples described in 'Symptoms' section, you can follow the steps in the 'Mitigation Details' below to gain further insights and diagnostic data to validate the required endpoints are accessible from your on-premises network, using any firewall and/or proxy server network infrastructure you or your network provider has configured.
 
-### Mitigation Details
+## Mitigation Details
 
 To help with troubleshooting or root causing network connectivity issues, you can use the **Test-AzureLocalConnectivity** function which is included in the **AzStackHCI.DiagnosticSettings** module, to automate testing connectivity is working correctly from your Azure Local physical machines to the required public endpoints. The function supports Arc Gateway scenarios and has an "-AzureRegion" parameter to allow you to test against a specific Azure region that matches your Azure Local instance deployment.
 
@@ -107,6 +107,6 @@ $Result.HealthCheckResult | ConvertTo-Json -Depth 10 | Out-File "C:\Temp\HealthR
 
 For additional information for how to analyze and understand the **$Results.HealthCheckResult** array, refer to this article: [Solution Update Readiness Checker - "using PowerShell" section](https://learn.microsoft.com//azure/azure-local/update/update-troubleshooting-23h2?view=azloc-24113#using-powershell).
 
-## Where to get additional support
+## How to get additional support
 
 If you need assistance with connectivity, please open a Support Request (SR) case with Microsoft CSS support using Azure portal.
