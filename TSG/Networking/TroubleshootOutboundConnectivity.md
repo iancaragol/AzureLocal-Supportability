@@ -4,7 +4,7 @@
 
 Azure Local requires outbound / egress network connectivity from the management network of your Azure Local instances to a list of public endpoints. Network connectivity to these endpoints is required for Azure Local to use Azure as a reliable management and control plane, such as for initial deployment, updates and workload provisioning operational capabilities. Allowing connectivity to the list of endpoints is a prerequisite for deployment, but ongoing connectivity to the list of endpoints is vital for support, manageability and licensing compliance.
 
-For additional information on Azure Local Firewall requirements, please review - [Azure Local Firewall documentation](https://learn.microsoft.com/azure/azure-local/concepts/firewall-requirements){target="_blank"}
+For additional information on Azure Local Firewall requirements, please review - [Azure Local Firewall documentation](https://learn.microsoft.com/azure/azure-local/concepts/firewall-requirements).
 
 ## Symptoms
 
@@ -84,7 +84,7 @@ To view the output from Azure Local **Environment Checker** Connectivity Validat
 Invoke-AzStackHciConnectivityValidation -PassThru | Where-Object -Property Status -eq FAILURE | Sort-Object TargetResourceName | Format-Table TargetResourceName -Autosize
 ````
 
-For additional information for how to use Azure Local Environment Checker module, refer to this article: [Readiness of your environment for Azure Local - "Run readiness checks" section](https://learn.microsoft.com/azure/azure-local/manage/use-environment-checker?view=azloc-24113&tabs=connectivity#run-readiness-checks){target="_blank"}.
+For additional information for how to use Azure Local Environment Checker module, refer to this article: [Readiness of your environment for Azure Local - "Run readiness checks" section](https://learn.microsoft.com/azure/azure-local/manage/use-environment-checker?view=azloc-24113&tabs=connectivity#run-readiness-checks).
 
 ### Solution Update Environment Tests
 
@@ -108,7 +108,7 @@ $Result.HealthCheckResult | ConvertTo-Json -Depth 10 | Out-File "C:\Temp\HealthR
 
 ````
 
-For additional information for how to analyze and understand the **$Results.HealthCheckResult** array, refer to this article: [Solution Update Readiness Checker - "using PowerShell" section](https://learn.microsoft.com//azure/azure-local/update/update-troubleshooting-23h2?view=azloc-24113#using-powershell){target="_blank"}.
+For additional information for how to analyze and understand the **$Results.HealthCheckResult** array, refer to this article: [Solution Update Readiness Checker - "using PowerShell" section](https://learn.microsoft.com//azure/azure-local/update/update-troubleshooting-23h2?view=azloc-24113#using-powershell).
 
 ## How to get additional support
 
