@@ -98,7 +98,7 @@ $Result = Get-SolutionUpdateEnvironment
 $Result.HealthCheckResult | Where-Object {$_.Status -ne "SUCCESS"} | Format-List Title, Status, Severity, Description, Remediation
 
 # Output to Text format
-$Result.HealthCheckResult | Out-File "C:\Temp\HealthResult-$((Get-Cluster).Name)).txt"
+$Result.HealthCheckResult | Out-File "C:\Temp\HealthResult-$((Get-Cluster).Name).txt"
 
 # Output to JSON format
 $Result.HealthCheckResult | ConvertTo-Json -Depth 10 | Out-File "C:\Temp\HealthResult-$((Get-Cluster).Name)).json"
