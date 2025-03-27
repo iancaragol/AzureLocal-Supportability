@@ -60,4 +60,4 @@ On each node where the issue is hit, follow below steps:
 
 3. Restart the node.
 
-4. In the Azure Portal, retry the failed validation by clicking "Try Again" button in the deploy blade.
+4. In the Azure Portal, retry the failed validation by clicking "Try Again" button in the deploy blade, or start the validation again if there is no "Try Again" option.
