@@ -12,3 +12,4 @@
 * [Update during .NET Updates Installation Out of Band .Net Updates Installed on the cluster](./Update-during-.NET-Updates-Installation-Out-of-Band-.Net-Updates-Installed-on-the-cluster.md)
 * [ECEAgent Slowness During Update](./ECEAgent-Slowness-During-Update.md)
 * [Update missing after importing SBE](./Update-missing-after-importing-SBE.md)
+* [2503 UpdatePrerequisites Failure: Remove older extensions (akshybrid, connectedmachine)](./UpdatePrerequisites-Failure-Remove-Older-Extensions.md) 
