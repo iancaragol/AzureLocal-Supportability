@@ -1,4 +1,4 @@
-# [2503] UpdatePreRequisites Failure: Remove older extensions (akshybrid, connectedmachine)
+# [2503] UpdatePreRequisites Failure: Remove older extensions (akshybrid, hybridaks) and Update ConnectedMachine
 
 
 When updating to 2503, if the following extensions are installed with the specified version, it could cause failures during UpdatePrerequisites step.
@@ -49,21 +49,21 @@ Using the output of last step, confirm if these extensions are installed:
 | hybridaks | 0.2.4 |
 | connectedmachine | 1.1.0 |
 
-#### **Remove the extension**
-The simplest way to address this issue is to remove the extension. These cli extensions are not required for the Update process, so it is fine to remove them.
+#### **Step 3: Remove the akshybrid, hybridaks. Update connectedmachine**
+The simplest way to address this issue is to remove the extension akshybrid and hybridaks. These cli extensions are not required for the Update process, so it is fine to remove them. For connectedmachine, the recommendation is to update it to the latest version.
 
 ```Powershell
 $moduleName = "akshybrid"
 az extension remove --name $moduleName
 
-$moduleName = "connectedmachine"
-az extension remove --name $moduleName
-
 $moduleName = "hybridaks"
 az extension remove --name $moduleName
+
+$moduleName = "connectedmachine"  
+az extension add --name $moduleName --only-show-errors --upgrade
 ```
 
-#### **Step 3: Verify if step 2 has been successful**
+#### **Step 4: Verify if step 2 has been successful**
 Confirm that the extensions have been removed/updated after last step:
 
 `az version`
