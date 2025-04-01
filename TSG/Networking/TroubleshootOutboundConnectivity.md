@@ -67,7 +67,7 @@ Test-Layer7Connectivity -url $url -port 443 -Verbose -Debug
 
 ```
 
-## Optional - Share test results with Microsoft
+## Share test results with Microsoft (Optional)
 
 The 'Test-AzureLocalConnectivity' function includes an option to upload the test results to Microsoft, this is controlled by a User Prompt that asks if you would like to **Upload the Transcript file and CSV file to Microsoft**. If you **answer "Y"** to the prompt, the function will automatically upload the output files to Microsoft, the transfer uses the built-in log transfer method that secure protocols, more information on the upload process is available [here](https://learn.microsoft.com/azure/azure-local/manage/collect-logs?view=azloc-24113&tabs=powershell#about-on-demand-log-collection).
 
@@ -78,6 +78,8 @@ If you are working with Microsoft customer service and support (CSS), and have a
 Example output is shown in the animated GIF image below, which shows an interactive console demo.
 
 The primary source of information is **copying / exporting the CSV output file** and Transcript file that are saved on the node (_or device running the 'Test-AzureLocalConnectivity' function_) to your laptop or desktop PC to open the CSV output in Excel, or another CSV file viewer.
+
+Click here to [**view an example CSV file output**](./AzureLocal_ConnectivityTest_EastUS_computer-name_2025-04-01-11-15-59.csv)
 
 ![Test-AzureLocalConnectivity Demo](./images/Test-AzureLocalConnectivity_Demo.gif)
 
