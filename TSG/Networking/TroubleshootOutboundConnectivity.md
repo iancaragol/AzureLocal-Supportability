@@ -8,33 +8,31 @@ For additional information on Azure Local Firewall requirements, please review -
 
 ## Symptoms
 
-Integrating Azure Local into your existing Firewall and/or Proxy Server infrastructure can be challenging depending on your organization's network security policies, such as requirements to define a strict access control list of the URL endpoints that are allowed to communicate from your Azure Local instance(s) "management network" to the required endpoints.
+Integrating Azure Local into a customers existing Firewall and/or Proxy Server infrastructure can be challenging depending on the organization's network security policies, such as requirements to define a strict access control list of the URL endpoints that are allowed to communicate from the Azure Local instance(s) "management network" to the required public endpoints.
 
-There are several symptoms or issues that will occur if the required endpoints are not accessible from your Azure Local instance(s), below are just a few examples:
+There are several symptoms or issues that will occur if the required endpoints are not accessible from the Azure Local instance(s), below are just a few examples:
 
 1. Azure Local instance cloud deployment and/or update operations fail with network failure or timeout.
 1. Physical machines show their "Azure Arc" status as "Disconnected" in Azure portal experience (_Arc agent not connected_).
 1. Deployment of new Azure Local VMs fails with RPC failure in Azure portal as the ARM deployment status.
-1. Updates fail at "update ARB and extensions" step  with "SSL: CERTIFICATE_VERIFY_FAILED" shown in Azure portal update blade.
+1. Updates fail at "update ARB and extensions" step with "SSL: CERTIFICATE_VERIFY_FAILED" shown in Azure portal update blade.
 1. There are many other network related issues that could occur when the required endpoints are not accessible from the management (_physical machines and ARB_) network address space.
+
+## Issue Validation
 
 Azure Local includes built-in automation modules that are executed as part of Solution Update Readiness and Environment Checker modules, both of these modules include connectivity tests that validate network connectivity status to critical endpoints. The output of these can be viewed locally using PowerShell, or using Azure portal during updates.
 
 > Note: For examples of how to use and view the output of Azure Local "Solution Update Environment" and "Environment Checker" built-in modules, see the [Appendix section](#appendix) at the bottom of this article.
 
-## Additional diagnostic and support tools
-
-To provide further assistance for support, validation, testing or support request (SR) troubleshooting scenarios, a stand-alone PowerShell function called **Test-AzureLocalConnectivity** has been created and  published in the PowerShell Gallery. This tool can be used to validate connectivity to the required endpoints, the function generates output to the console and to a comma separated value (CSV) file that can be easily viewed in Excel, once copied from the node, and/or shared as a point in time status of the connectivity tests.
-
-## Issue Validation
-
-If you are experiencing network related issues or failures, as per the examples described in 'Symptoms' section, you can follow the steps in the 'Mitigation Details' below to gain further insights and diagnostic data to validate the required endpoints are accessible from your on-premises network, using any firewall and/or proxy server network infrastructure you or your network provider has configured.
+If you are finding it difficult to isolate the cause of the network related issue(s) or failure(s), and are experiencing issues as described in 'Symptoms' section, you can follow the steps in the 'Mitigation Details' below to gain further insights and diagnostic data to validate the required endpoints are accessible from your on-premises network.
 
 ## Mitigation Details
 
-To help with troubleshooting or root causing network connectivity issues, you can use the **Test-AzureLocalConnectivity** function which is included in the **AzStackHCI.DiagnosticSettings** module. This function can help automate testing that connectivity is working correctly from your Azure Local physical machines to the required public endpoints. The function supports Arc Gateway scenarios and has an "-AzureRegion" parameter to allow you to test against a specific Azure region that matches your Azure Local instance deployment.
+To help with troubleshooting or root causing network connectivity issues, you can use the **Test-AzureLocalConnectivity** function which is included in the **AzStackHCI.DiagnosticSettings** module. This function can help automate testing that connectivity is working correctly from Azure Local physical machines to the required public endpoints. The function supports Arc Gateway scenarios and has an [-AzureRegion] parameter to allow testing against a specific Azure region that matches your Azure Local instance deployment.
 
 The 'Test-AzureLocalConnectivity' function has a dependency on the Azure Local Environment Checker module being installed, which is installed by default on all Azure Local physical machines. If Environment Checker module (_AzStackHci.EnvironmentChecker_) is not installed on the device running the connectivity test, you will be prompted to install the module first. The device used to install the AzStackHCI.DiagnosticSettings module and test connectivity must have access to the PowerShell Gallery, in order to download the module (_nuget package_) to install it.
+
+To install the AzStackHCI.DiagnosticSettings module to perform connectivity tests for a support or troubleshooting scenario, use the commands below:
 
 **To install the AzStackHCI.DiagnosticSettings** module to enable you to perform connectivity tests for a support or troubleshooting scenario, you can use the commands below:
 
@@ -46,13 +44,16 @@ Install-Module -Name "AzStackHci.DiagnosticSettings" -Repository PSGallery
 # /// ACTION: Update <AzureRegionName> and <YourKeyVaultName> to match the values of your Azure Region and Key Vault.
 Test-AzureLocalConnectivity -AzureRegion "<AzureRegionName>" -KeyVaultURL "https://<YourKeyVaultName>.vault.azure.net"
 
+# Optional parameters for more detailed output, add: "-Verbose" and "-Debug" to the function above, which will output full diagnostic level responses from the remote endpoint web server. 
+# The output from the function is automatically saved in the PowerShell transcript.
+
 ```
 
 For the most recent / up to date list of supported Azure regions review the ["Azure requirements" - System requirements for Azure Local](https://learn.microsoft.com/azure/azure-local/concepts/system-requirements-23h2?view=azloc-24113#azure-requirements) article. At the time of publishing this article, the list of valid Azure Region names for Azure Local include:
 
 * "EastUS", "WestEurope", "AustraliaEast", "CanadaCentral", "CentralIndia", "JapanEast", "SouthCentral", "SouthEastAsia"
 
-If you would like to test an individual public endpoints using PowerShell for troubleshooting or support purposes, you can use the "Test-Layer7Connectivity" function using the commands below:
+If you would like to test an individual public endpoint using PowerShell for troubleshooting or support purposes, you can use the "**Test-Layer7Connectivity**" function which is part of the same module, example syntax is shown below:
 
 ```Powershell
 
@@ -66,13 +67,83 @@ Test-Layer7Connectivity -url $url -port 443 -Verbose -Debug
 
 ```
 
-### Example output
+## Optional - Share test results with Microsoft
+
+When the 'Test-AzureLocalConnectivity' function has finishes, it displays a User Prompt to ask if you would like to **Upload the Transcript file and CSV file to Microsoft**, if you answer "Y" to the prompt, the function automatically uploads the output files to Microsoft, the transfer uses secure protocols and uses your cluster ARM Resource URI is the reference.
+
+If you are working with Microsoft customer service and support (CSS) team, and have a support request (SR) case open, you could share some of the text output from the screen that shows your "AEORegion", "ARODeviceARMResourceUri" and "CorrelationId" with the SR case owner.
+
+### Demo and example output
 
 Example output is shown in the animated GIF image below, which shows an interactive console demo.
 
-The primary source of information is copying / exporting the CSV file that is generated from the node to your laptop or desktop PC to open the output in Excel, or another CSV file viewer.
+The primary source of information is **copying / exporting the CSV output file** and Transcript file that are saved on the node (_or device running the 'Test-AzureLocalConnectivity' function_) to your laptop or desktop PC to open the CSV output in Excel, or another CSV file viewer.
 
 ![Test-AzureLocalConnectivity Demo](./images/Test-AzureLocalConnectivity_Demo.gif)
+
+### **Test-AzureLocalConnectivity function parameters for syntax**
+
+````PowerShell
+    [CmdletBinding()]
+
+    param (
+
+        [ValidateSet("EastUS", "WestEurope", "AustraliaEast", "CanadaCentral", "CentralIndia", "JapanEast", "SouthCentral", "SouthEastAsia")]
+
+        [string]$AzureRegion,
+
+        [System.Uri]$KeyVaultURL,
+
+  
+
+        [Parameter(Mandatory=$false, Position=2, HelpMessage="Optional switch to ONLY test URLs that do NOT support Arc Gateway, default is to test all URLs")]
+
+        [switch]$ArcGatewayDeployment,
+
+  
+
+        [Parameter(Mandatory=$false, Position=3, HelpMessage="Optional parameter to specify a custom Arc Gateway URL to test connectivity, including the https:// prefix, for example: 'e.g. 'https://1be59945-12c0-4cda-9580-84a66a1120a0.gw.arc.azure.com'")]
+
+        [System.Uri]$ArcGatewayURL,
+
+  
+
+        [Parameter(Mandatory=$false, Position=4, HelpMessage="Optional parameter to specify a custom DNS Name for the NTP Time Server, this should NOT include a http:// or https:// prefix, e.g. 'yourtimeserver.fqdn'")]
+
+        [ValidateLength(1, 255)]
+
+        [string]$NTPTimeServer,
+
+  
+
+        [Parameter(Mandatory=$false, Position=5, HelpMessage="Optional switch to include tests for TCP Connectivity, for scenarios such as not using a Proxy.")]
+
+        [switch]$IncludeTCPConnectivityTests,
+
+  
+
+        [Parameter(Mandatory=$false, Position=6, HelpMessage="Optional switch to exclude testing Redirected URLs.")]
+
+        [switch]$ExcludeRedirectedUrls,
+
+  
+
+        [Parameter(Mandatory=$false, Position=7, HelpMessage="Optional switch to exclude testing manually defined subdomains for Wildcard endpoints.")]
+
+        [switch]$ExcludeWildcardTests,
+
+  
+        [Parameter(Mandatory=$false, Position=8, HelpMessage="Optional switch to exclude uploading the test results to Microsoft.")]
+
+        [switch]$ExcludeUploadResults,
+
+  
+      [Parameter(Mandatory=$false, Position=9, HelpMessage="Optional parameter to return '`$Results' array object in PowerShell, for further processing.")]
+
+         [switch]$PassThru
+    )
+
+````
 
 ## Appendix
 
