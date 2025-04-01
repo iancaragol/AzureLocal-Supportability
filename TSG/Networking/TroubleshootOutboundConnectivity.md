@@ -69,7 +69,7 @@ Test-Layer7Connectivity -url $url -port 443 -Verbose -Debug
 
 ## Optional - Share test results with Microsoft
 
-When the 'Test-AzureLocalConnectivity' function has finishes, it displays a User Prompt to ask if you would like to **Upload the Transcript file and CSV file to Microsoft**, if you answer "Y" to the prompt, the function automatically uploads the output files to Microsoft, the transfer uses secure protocols and uses your cluster ARM Resource URI is the reference.
+The 'Test-AzureLocalConnectivity' function includes an option to upload the test results to Microsoft, this is controlled by a User Prompt that asks if you would like to **Upload the Transcript file and CSV file to Microsoft**. If you **answer "Y"** to the prompt, the function will automatically upload the output files to Microsoft, the transfer uses the built-in log transfer method that secure protocols, more information on the upload process is available [here](https://learn.microsoft.com/azure/azure-local/manage/collect-logs?view=azloc-24113&tabs=powershell#about-on-demand-log-collection).
 
 If you are working with Microsoft customer service and support (CSS), and have a support request (SR) case open, you could share some of the "Share Test Results" log upload text output that shows your cluster's "AEORegion", "ARODeviceARMResourceUri" and "CorrelationId" with the SR case owner.
 
