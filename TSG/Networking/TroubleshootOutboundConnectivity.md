@@ -8,7 +8,7 @@ For additional information on Azure Local Firewall requirements, please review -
 
 ## Symptoms
 
-Integrating Azure Local into a customers existing Firewall and/or Proxy Server infrastructure can be challenging depending on the organization's network security policies, such as requirements to define a strict access control list of the URL endpoints that are allowed to communicate from the Azure Local instance(s) "management network" to the required public endpoints.
+Integrating Azure Local into your existing Firewall and/or Proxy Server infrastructure can be challenging depending on your organization's network security policies, such as requirements to define a strict access control list of the URL endpoints that are allowed to communicate from your Azure Local instance(s) "management network" to the required public endpoints.
 
 There are several symptoms or issues that will occur if the required endpoints are not accessible from the Azure Local instance(s), below are just a few examples:
 
@@ -71,7 +71,7 @@ Test-Layer7Connectivity -url $url -port 443 -Verbose -Debug
 
 When the 'Test-AzureLocalConnectivity' function has finishes, it displays a User Prompt to ask if you would like to **Upload the Transcript file and CSV file to Microsoft**, if you answer "Y" to the prompt, the function automatically uploads the output files to Microsoft, the transfer uses secure protocols and uses your cluster ARM Resource URI is the reference.
 
-If you are working with Microsoft customer service and support (CSS) team, and have a support request (SR) case open, you could share some of the text output from the screen that shows your "AEORegion", "ARODeviceARMResourceUri" and "CorrelationId" with the SR case owner.
+If you are working with Microsoft customer service and support (CSS), and have a support request (SR) case open, you could share some of the "Share Test Results" log upload text output that shows your cluster's "AEORegion", "ARODeviceARMResourceUri" and "CorrelationId" with the SR case owner.
 
 ### Demo and example output
 
