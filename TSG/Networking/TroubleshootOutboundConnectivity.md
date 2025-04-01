@@ -73,7 +73,7 @@ The 'Test-AzureLocalConnectivity' function includes an option to upload the test
 
 If you are working with Microsoft customer service and support (CSS), and have a support request (SR) case open, you could share some of the "Share Test Results" log upload text output that shows your cluster's "AEORegion", "ARODeviceARMResourceUri" and "CorrelationId" with the SR case owner.
 
-### Demo and example output
+## Demo and example output
 
 Example output is shown in the animated GIF image below, which shows an interactive console demo.
 
