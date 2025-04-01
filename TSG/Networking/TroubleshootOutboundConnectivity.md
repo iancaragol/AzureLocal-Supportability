@@ -53,7 +53,7 @@ For the most recent / up to date list of supported Azure regions review the ["Az
 
 * "EastUS", "WestEurope", "AustraliaEast", "CanadaCentral", "CentralIndia", "JapanEast", "SouthCentral", "SouthEastAsia"
 
-If you would like to test an individual public endpoint using PowerShell for troubleshooting or support purposes, you can use the "**Test-Layer7Connectivity**" function which is part of the same module, example syntax is shown below:
+If you would like to test an individual public endpoint using PowerShell for troubleshooting or support purposes, you can use the "**Test-Layer7Connectivity**" function with the "-Debug" switch. Example syntax is shown below:
 
 ```Powershell
 
