@@ -9,7 +9,7 @@ Or action plan log:
 `Type 'SelfUpdate' of Role 'UpdateBootstrap' raised an exception: The referenced account is currently locked out and may not be logged on to. at Install-Nuget`
 
 # Issue Validation
-ECEAgent or "Azure Stack HCI Orchestrator Service" service is unable to start, ore remoting fails. To determine which account is locked, connect to the nodes and run:
+ECEAgent or "Azure Stack HCI Orchestrator Service" service is unable to start, or a remote operation fails. To determine which account is locked, connect to the nodes and run:
 ```
 Get-WmiObject -Query "SELECT * FROM Win32_UserAccount Where LocalAccount = true" -computerName localhost | Format-Table Domain, Name, lockOut, Disabled
 ```
