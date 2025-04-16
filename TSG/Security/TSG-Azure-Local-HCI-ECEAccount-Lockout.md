@@ -4,6 +4,7 @@ ECEAgent or "Azure Stack HCI Orchestrator Service" is unable to start because EC
 An error like the following in the System Event Log:
 `The ECEAgent service was unable to log on as .\ECEAgentService with the currently configured password due to the following error: 
 The referenced account is currently locked out and may not be logged on to.`
+
 Or action plan log:
 `Type 'SelfUpdate' of Role 'UpdateBootstrap' raised an exception: The referenced account is currently locked out and may not be logged on to. at Install-Nuget`
 
