@@ -1,96 +1,115 @@
-During Azure Local solution update, the overall upgrade operation will fail - the ARB cluster upgrade succeeds, but a cleanup setup during the ARB upgrade operation fails as ARB RP is unable to delete the dependent cluster extension used to trigger ARB cluster upgrade.
+During Azure Local solution update, the overall cluster upgrade **may fail**. Although the Azure Resource Bridge (ARB) cluster upgrade itself succeeds, a cleanup step fails when the platform tries to delete the cluster extension used to trigger the upgrade. The failure occurs because the delete operation is blocked by a resource lock.
 
-ARB RP deploys the Appliance Management Cluster Extension/KVA Management Operator (AMCE/KVAMO) to trigger the cluster upgrade. This means ARB expects to be able to create and delete this cluster extension as part of the upgrade operation.
+## Symptoms
 
-# Symptoms
+You may encounter a `ScopeLocked` error similar to the following:
 
-Error: [ERROR: (FailedToDeleteClusterExtension) DELETE https://management.azure.com/subscriptions/{subscription}/resourceGroups/{resource-group}/providers/microsoft.resourceconnector/appliances/{appliance}/providers/Microsoft.KubernetesConfiguration/extensions/kva-management-operator/providers/Microsoft.KubernetesConfiguration/extensions/kva-management-operator 
---------------------------------------------------------------------------------
+```
+[ERROR: (FailedToDeleteClusterExtension) DELETE https://management.azure.com/... 
 RESPONSE 409: 409 Conflict ERROR CODE: ScopeLocked
---------------------------------------------------------------------------------
-
-```json
-{  
- "error":
-  {     
-   "code": "ScopeLocked",     
-   "message": "The scope 
-'/subscriptions/********************/resourceGroups/***********/providers/microsoft.resourceconnector/appliances/**********/providers/Microsoft.KubernetesConfiguration/extensions/kva-management-operator' 
-   cannot perform delete operation because following scope(s) are locked: '/subscriptions/********************/resourceGroups/***********/providers/microsoft.resourceconnector/appliances 
-  /**********'. 
-   Please remove the lock and try again."   
- } 
-}
 ```
-# Cause
-ASZ/Azure Stack HCI documentation recommends the customer to create a DELETE lock on the ARB resource here . This is the reason the customer runs into the error mentioned above during ARB upgrade operation.
-
-**ARB RP by design deploys and deletes the cluster extension during ARB cluster upgrade operation. Delete locks prevents ARB RP from successfully performing upgrade operation. Therefore, delete lock recommendation in the HCI documentation is incorrect and documentation needs to be updated to remove this recommendation.**
-
-The work item to get this recommendation removed from public documentation is tracked by 275231 . However, if a customer faces this issue, the following mitigation is recommended.
-
-# Mitigation
-
- We recommend executing the following steps for mitigation.
-
-1. Remove Lock from Resource bridge object.
-* In the Azure portal, navigate to the resource group into which you deployed your Azure Stack HCI system.
-* On the Overview > Resources tab, you should see an Arc Resource Bridge resource.
-* Select and go to the resource. In the left pane, select Locks. To remove the lock for the Arc Resource Bridge, you must have the Azure Stack HCI Administrator role for the resource group.
-* In the right pane, select Delete.
-
-2. Delete the cluster extension
-
-* Requirements
-You need to be aware of the ARB resource's subscriptionID, resourceGroupName, and resourceName
-
-```powershell
-# Ensure k8s-extension CLI is installed
-az extension add -n k8s-extension
-    
-# Set subscription id
-az account set -s "<subscriptionID>"
-    
-# Delete cluster extension
-```powershell
-az k8s-extension delete -g "<resourceGroupName>" -t "appliances" --cluster-name "<resourceName>" --name "kva-management-operator"
-```
-3. Do a PUT call on the ARB resource
-
-Requirements
-* Path to config file
-
-* For ASZ/HCI this will be ``C:\ClusterStorage\Infrastructure_1\Shares\SU1_Infrastructure_1\MocArb\WorkingDirectory\Appliance\hci-appliance.yaml``
-* For VMware and SCVMM this will be wherever the customer chose to save the configuration. If lost, please rebuild the config using ``az arcappliance createconfig`` (documentation found [here](https://learn.microsoft.com/en-us/cli/azure/arcappliance/createconfig))
-Path to kubeconfig file
-* For ASZ/HCI this will be ``C:\ClusterStorage\Infrastructure_1\Shares\SU1_Infrastructure_1\MocArb\WorkingDirectory\Appliance\kubeconfig``
-For VMware and SCVMM this will wherever the customer has saved the kubeconfig.
-This can be retrieved if lost using az arcappliance get-credentials (documentation here )
-Provider type (hci, vmware, scvmm)
-
-```powershell
-az arcappliance create "<provider>" --config-file "<path to appliance yaml>" --kubeconfig "<path to kubeconfig>"
-```
-Verify the resource is in status Running and Provisioning State Succeeded
-Requirements
-The expected version of ARB post-mitigation should remain the same as it was before the mitigation was applied. If the version doesn't match the expected version, please reach out to the ARB team.
 
 ```json
 {
-        "id": "/subscriptions/**********/resourceGroups/********/providers/Microsoft.ResourceConnector/appliances/****",
-        "name": "**********",
-        "location": "**********",
-        "identity": {
-            "type": "SystemAssigned",
-            "principalId": "**********",
-            "tenantId": "**********"
-        },
-        "type": "Microsoft.ResourceConnector/appliances",
-        "properties": {
-            "distro": "AKSEdge",
-            "version": "<expected version>", <----- Important
-            "status": "Running", <----- Important
-            "provisioningState": "Succeeded" <---- Important
-        }
-    }
+  "error": {
+    "code": "ScopeLocked",
+    "message": "The scope '/subscriptions/.../providers/Microsoft.KubernetesConfiguration/extensions/kva-management-operator' 
+    cannot perform delete operation because following scope(s) are locked: 
+    '/subscriptions/.../providers/microsoft.resourceconnector/appliances/...'. 
+    Please remove the lock and try again."
+  }
+}
+```
+
+## Root Cause
+
+During ARB upgrade, the platform deploys the **Appliance Management Cluster Extension** (also known as the **KVA Management Operator**) to initiate the upgrade. The ARB platform expects to manage the lifecycle of this extension—including deleting it after the upgrade completes. If the ARB resource is locked for deletion, the platform cannot remove the extension, causing the upgrade operation to end in an incomplete state.
+
+## Mitigation Steps
+
+To resolve the issue, follow these steps:
+
+### 1. Remove the Delete Lock
+
+1. Open the Azure portal.
+2. Navigate to the resource group where the Azure Local system is deployed.
+3. Locate the **Arc Resource Bridge** resource.
+4. Select it, then go to the **Locks** tab in the left pane.
+5. If a **Delete** lock exists, remove it.  
+   > ⚠️ You need **Azure Local Administrator** role permissions for the resource group to delete the lock.
+
+### 2. Delete the Cluster Extension
+
+Before proceeding, make sure you:
+
+- Have the Azure CLI installed
+- Know your ARB resource's `subscriptionId`, `resourceGroupName`, and `resourceName`
+
+```powershell
+az login --use-device-code
+
+# Install CLI extension (if not already installed)
+az extension add -n k8s-extension
+
+# Set your subscription context
+az account set -s "<subscriptionId>"
+
+# Delete the KVA Management Operator extension
+az k8s-extension delete -g "<resourceGroupName>" -t "appliances" --cluster-name "<resourceName>" --name "kva-management-operator"
+```
+
+### 3. Reapply the ARB Resource Configuration
+
+You must reapply the same ARB resource configuration used during the original deployment. Ensure you have:
+
+- The ARB appliance YAML config file
+- The ARB `kubeconfig` file
+- The provider type (e.g., Azure Local or VMware)
+
+Example paths for Azure Local deployments:
+
+- Config file:  
+  `C:\ClusterStorage\Infrastructure_1\Shares\SU1_Infrastructure_1\MocArb\WorkingDirectory\Appliance\hci-appliance.yaml`
+- Kubeconfig file:  
+  `C:\ClusterStorage\Infrastructure_1\Shares\SU1_Infrastructure_1\MocArb\WorkingDirectory\Appliance\kubeconfig`
+
+If you've lost either file:
+
+- Rebuild the config file using:  
+  `az arcappliance createconfig`
+- Retrieve kubeconfig using:  
+  `az arcappliance get-credentials`
+
+Then run:
+
+```powershell
+az arcappliance create "<provider>" --config-file "<path-to-appliance-yaml>" --kubeconfig "<path-to-kubeconfig>"
+```
+
+### 4. Verify ARB Status
+
+```powershell
+az arcappliance show --resource-group "<resource-group>" --name "<ARB name>"
+```
+
+Confirm that the ARB resource returns to a healthy state with:
+
+- `status`: `Running`
+- `provisioningState`: `Succeeded`
+- `version`: matches the version before the mitigation
+
+You can check this with:
+
+```json
+{
+  "id": "/subscriptions/**********/resourceGroups/********/providers/Microsoft.ResourceConnector/appliances/****",
+  "name": "**********",
+  "location": "**********",
+  "type": "Microsoft.ResourceConnector/appliances",
+  "properties": {
+    "status": "Running",
+    "provisioningState": "Succeeded",
+    "version": "<expected version>"
+  }
+}
 ```
