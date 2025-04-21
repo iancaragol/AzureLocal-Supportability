@@ -64,7 +64,7 @@ You must reapply the same ARB resource configuration used during the original de
 
 - The ARB appliance YAML config file
 - The ARB `kubeconfig` file
-- The provider type (e.g., Azure Local or VMware)
+- The provider type (e.g. hci, vmware, scvmm)
 
 Example paths for Azure Local deployments:
 
