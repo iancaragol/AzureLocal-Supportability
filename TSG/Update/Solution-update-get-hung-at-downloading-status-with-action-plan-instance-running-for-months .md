@@ -34,7 +34,7 @@ $actionPlanInstanceID = "<ActionPlan Instance ID>"
 Cancel-ActionPlanInstance -eceClient $eceClient -actionPlanInstanceID $actionPlanInstanceID
 
 # remove old instance
-$deleteActionPlanInstanceDescription = New-Object -TypeName 'GetCauDeviceInfo'
+$deleteActionPlanInstanceDescription = New-Object Microsoft.AzureStack.Solution.Deploy.EnterpriseCloudEngine.Controllers.Models.DeleteActionPlanInstanceDescription
 $deleteActionPlanInstanceDescription.ActionPlanInstanceID = $actionPlanInstanceID
 $eceClient.DeleteActionPlanInstance($deleteActionPlanInstanceDescription).Wait()
 ```
