@@ -9,6 +9,7 @@
 * [Add/Repair Node fails at "GenerateSSLCertificatesForAddScaleUnitNodes" with "The system cannot find the file specified."](./AddNode-RepairNode-Fail-GenerateSSLCertificatesForAddScaleUnitNodes.md)
 * [Get-SolutionUpdate GatewayTimeout](./Get-SolutionUpdate-GatewayTimeout.md)
 * [UpdateOsBuildNumberInEce interface fails during Solution update because of inconsistent OS versions between nodes](./UpdateOsBuildNumberInEce-MismatchedBuilds.md)
+* [Update during .NET Updates Installation Cannot validate argument on parameter ClusterName](./Update-during-.NET-Updates-Installation-Cannot-validate-argument-on-parameter-ClusterName.md)
 * [Update during .NET Updates Installation Out of Band .Net Updates Installed on the cluster](./Update-during-.NET-Updates-Installation-Out-of-Band-.Net-Updates-Installed-on-the-cluster.md)
 * [ECEAgent Slowness During Update](./ECEAgent-Slowness-During-Update.md)
 * [Update missing after importing SBE](./Update-missing-after-importing-SBE.md)
