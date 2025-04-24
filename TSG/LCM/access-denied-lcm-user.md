@@ -27,7 +27,7 @@ $targetHostname = "<target_hostname>" # This is your target host
 Invoke-Command -computername $targetHostname -credential $credential -scriptblock {hostname}
 ```
 
-If you receive an error stating the connection failed, you should verify that the credentials in the ECE store match the LCM user credentials in Active Directory. To do this, run the validation and mitigation script in the [Validating LCM (user deployment) credentials match the credentials ECE Store section](#validating-lcm-user-deployment-credentials-match-the-credentials-ece-store). 
+If you receive an error stating the connection failed, you should verify that the credentials in the ECE store match the LCM user credentials in Active Directory. To do this, run the validation and mitigation script in the [Validating LCM (user deployment) credentials match the ECE Store section](#validating-lcm-user-deployment-credentials-match-the-ece-store). 
 
 If there is no error with connecting to the node using the credentials, verify the Active Directory permissions are set properly for the LCM user. Log into the domain controller node using the LCM user credentials and run the following to get the Access Control List (ACL) for the user on the OU. Please replace LCM username accordingly.
 
@@ -54,10 +54,16 @@ IdentityReference           ActiveDirectoryRights AccessControlType
 <domain>\<LCM Username>  CreateChild, DeleteChild             Allow
 ```
 
-The user should have ReadProperty, GenericAll, CreateChild, and DeleteChild permissions on the OU. If you do not see all of these ActiveDirectoryRights listed for this user, please follow [instructions to prepare active directory](https://learn.microsoft.com/en-us/azure/azure-local/deploy/deployment-prep-active-directory?view=azloc-2503), including running the AsHciADArtifactsPreCreationTool listed in the wiki to ensure all permissions are set appropriately for the user.
+The user should have the following permissions on the OU:
+* ReadProperty 
+* GenericAll 
+* CreateChild 
+* DeleteChild 
+ 
+ If you do not see all of these ActiveDirectoryRights listed for this user, please follow [instructions to prepare active directory](https://learn.microsoft.com/en-us/azure/azure-local/deploy/deployment-prep-active-directory?view=azloc-2503), including running the AsHciADArtifactsPreCreationTool listed in the wiki to ensure all permissions are set appropriately for the user.
 
 # Scripts
-### Validating LCM (user deployment) credentials match the credentials ECE Store
+### Validating LCM (User Deployment) Credentials Match the ECE Store
 
 ### Prerequisites
 Ensure the certificate with subject name CN=RuntimeParameterEncryptionCert is not missing or expired. If so, please run [Start-SecretRotation](https://learn.microsoft.com/en-us/azure/azure-local/manage/manage-secrets-rotation?view=azloc-24113) to rotate certificates.
