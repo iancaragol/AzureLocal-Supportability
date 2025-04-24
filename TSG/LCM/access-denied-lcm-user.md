@@ -1,13 +1,13 @@
 # Symptoms
 During deployment, update, or add-node you may encounter 'Access Denied'. Some examples include:
 
-During deployment,
+During deployment you might see the following error message:
 
 ```
 raised an exception: Connecting to remote server xxx failed with the following error message : Access is denied
 ```
 
-During update download stage, you may see 
+During update download stage, you may see:
 
 ```
 update package download failure with details similar to "Action plan GetCauDeviceInfo ID xxx failed with state: Failed".
@@ -74,7 +74,7 @@ Import-Module "C:\Program Files\WindowsPowerShell\Modules\Microsoft.AS.Infra.Sec
 ValidateIdentity -Username $credential.UserName
 
 # Convert the SecureString password to an encrypted standard string
-$encryptedPassword = $credential.GetNetworkCredential().Password | Protect-CmsMessage -To "CN=DscEncryptionCert"
+$encryptedPassword = $credential.GetNetworkCredential().Password | Protect-CmsMessage -To "CN=RuntimeParameterEncryptionCert"
 
 # Validate credentials in ECE
 $ValidateParams = @{
@@ -110,45 +110,6 @@ elseif ($ValidateActionPlanInstance.Status -eq 'Completed')
 ### Mitigation
 Please input your LCM user credentials when prompted.
 
-```PowerShell
-# Prompt for credentials
-$credential = Get-Credential
-
-# Import the necessary module
-Import-Module "C:\Program Files\WindowsPowerShell\Modules\Microsoft.AS.Infra.Security.SecretRotation\PasswordUtilities.psm1" -DisableNameChecking
-
-# Validate that the username provided by customer is of the correct format. Username should be provided without domain and not contain any special characters.
-ValidateIdentity -Username $credential.UserName
-
-# Check the status of the ECE cluster group
-$eceClusterGroup = Get-ClusterGroup | Where-Object { $_.Name -eq "Azure Stack HCI Orchestrator Service Cluster Group" }
-if ($eceClusterGroup.State -ne "Online") {
-    Write-AzsSecurityError -Message "ECE cluster group is not in an Online state. Cannot continue with password rotation." -ErrRecord $_
-}
-
-# Update ECE with the new password
-Write-AzsSecurityVerbose -Message "Updating password in ECE" -Verbose
-
-$ECEContainersToUpdate = @(
-    "DomainAdmin",
-    "DeploymentDomainAdmin",
-    "SecondaryDomainAdmin",
-    "TemporaryDomainAdmin",
-    "BareMetalAdmin",
-    "FabricAdmin",
-    "SecondaryFabric",
-    "CloudAdmin"
-)
-
-foreach ($containerName in $ECEContainersToUpdate) {
-    Set-ECEServiceSecret -ContainerName $containerName -Credential $credential 3>$null 4>$null
-}
-
-Write-AzsSecurityVerbose -Message "Finished updating credentials in ECE." -Verbose
-```
-
-# Finding the LCM User
-To find your LCM user, please run the following script:
 ```PowerShell
 # Prompt for credentials
 $credential = Get-Credential
