@@ -21,40 +21,94 @@ update package download failure with details similar to "Action plan GetCauDevic
 # Known Causes
 1. The LCM (deployment user) credentials were not updated properly using the [Set-AzureStackLCMUserPassword](https://learn.microsoft.com/en-us/azure/azure-local/manage/manage-secrets-rotation?view=azloc-24112#run-set-azurestacklcmuserpassword-cmdlet) cmdlet. This cmdlet is responsible for updating the password in Active Directory as well as updating it in the ECE Store. Both of these should be in sync, otherwise there will be access denied issues.
 2. The LCM user does not have sufficient permissions on the Organization Unit (OU) in Active Directory (AD).
-3. The host's NTLM policy is blocking Invoke-Command.
+3. The cluster node's NTLM policy, configured via Group Policy, may be blocking remote operations such as Invoke-Command. This can occur if NTLM is restricted either at the OU level or on the individual nodes via applied Group Policy Objects (GPOs).
 4. The WinRM trusted hosts configuration is set up incorrectly.
 
 # Issue Validation
-If you encounter an "Access Denied" error during deployment, update, or node addition, first verify the LCM user is in the Local Administrators group and that you are able to connect to a node with the LCM (deployment user) credentials. If you do not know your LCM username, please view the [Retrieving your LCM (user deployment) username section](#retrieving-your-lcm-deployment-user-username).
+
+### Step 1: Check if LCM user is in the Local Administrators Group
+Run the script below, replacing the `lcmUser` variable with your LCM (deployment) user. If you do not know your LCM username, please view the [Retrieving your LCM (user deployment) username section](#retrieving-your-lcm-deployment-user-username). If you do not know your LCM user credentials, then you will need to recreate the LCM user and follow this document to ensure the LCM user is set up properly.
+```Powershell
+# Check if LCM user is in the Local Administrators group
+$lcmUser = 'DOMAIN\LCMUser'  # Replace 'DOMAIN\LCMUser' with the actual LCM username
+
+# Get the list of members in the local Administrators group
+$admins = Get-LocalGroupMember -Group 'Administrators'
+
+# Check if the LCM user is in the group
+if ($admins.Name -contains $lcmUser) {
+    Write-Output "$lcmUser is in the local Administrators group."
+} else {
+    Write-Output "$lcmUser is NOT in the local Administrators group."
+    
+    # If not in the Administrators group, add the user
+    try {
+        Add-LocalGroupMember -Group 'Administrators' -Member $lcmUser
+        Write-Output "$lcmUser was successfully added to the local Administrators group."
+    } catch {
+        Write-Error "Failed to add $lcmUser to the Administrators group. Error: $_"
+    }
+}
+```
+
+### Step 2: Check the LCM user credentials work on all nodes
+Verify the LCM user credentials work with all iterations of Invoke-Command with and without CredSSP and using the hostname or the IP as the target:
 
 ```PowerShell
 $credential = Get-Credential # Input your LCM (deployment user) credentials
 
 $targetHostname = "<target_hostname>" # Replace with your target host
-Invoke-Command -computername $targetHostname -credential $credential -scriptblock {hostname}
-
 $targetIp = "<target_ip>" # Replace with your target IP address
+
+Invoke-Command -computername $targetHostname -credential $credential -scriptblock {hostname}
+Invoke-Command -ComputerName $targetHostname -Credential $credential -Authentication Credssp -ScriptBlock {whoami}
+
 Invoke-Command -computername $targetIp -credential $credential -scriptblock {hostname}
+Invoke-Command -ComputerName $targetIp -Credential $credential -Authentication Credssp -ScriptBlock {whoami}
 ```
 
-**You should attempt this using both hostname and ip for every node in your cluster to ensure it works across all nodes**
+If there are no issues running the previous script, then proceed to **Step 3**, otherwise:
 
-If you receive an error stating the connection failed, you should verify the credentials and update using the [Set-AzureStackLCMUserPassword](https://learn.microsoft.com/en-us/azure/azure-local/manage/manage-secrets-rotation?view=azloc-24112#run-set-azurestacklcmuserpassword-cmdlet) cmdlet. If Invoke-Command works, you should check the credentials in the ECE store match the LCM user credentials in Active Directory. To do this, run the validation and mitigation script in the [Validating LCM (user deployment) credentials match the ECE Store section](#validating-lcm-user-deployment-credentials-match-the-ece-store). 
+1. If no Invoke-Command works (with or without CredSSP), double check you have entered the right the LCM user credentials. If you are certain they are correct, then check the [WinRM Trusted Hosts configuration](#winrm-trusted-hosts-configuration) is set up properly to include all hostnames and IPs of all nodes in your cluster.
+2. If Invoke-Command without CredSSP works, but CredSSP does not work, try [resetting the CredSSP registry keys](#reset-credssp-registry-keys).
+3. If Invoke-Command with hostname works, but using the IP does not work, ensure the [WinRM Trusted Hosts configuration](#winrm-trusted-hosts-configuration) is set up properly to include all IPs of all nodes in your cluster.
+ 
+### Step 3: Verify the LCM credential in AD matches ECE Store
+If invoke-command works, then first validate the credential exists in ECE store by running the script in the [Validating LCM (user deployment) credentials match the ECE Store](#validating-lcm-user-deployment-credentials-match-the-ece-store) section. If this script returns that they do not match, run the mitigation script from the same section.
 
-Next, verify the Active Directory permissions are set properly for the LCM user. Log into the domain controller node using the LCM user credentials and run the following to get the Access Control List (ACL) for the user on the OU. Please replace the LCM username in the script with your LCM username and the sample OU with your environment OU.
+### Step 4: Check LCM user permissions on the OU
+Verify the Active Directory permissions are set properly for the LCM user. Log into the domain controller node using the LCM user credentials and run the following to get the Access Control List (ACL) for the user on the OU. Replace the LCM username in the script with your LCM username and the sample OU with your environment OU.
 
 ```Powershell
+# Define the target OU (update to match your environment)
 $ou = "OU=MyOU,DC=domain,DC=com"
+
+# Get the ACL of the OU
 $acl = Get-Acl "AD:$ou"
 
-$lcmUsername = "<lcm username>"
+# Define the LCM username (without domain prefix)
+$lcmUsername = "<lcm_username>"
+
+# Get the domain name in short form
 $domain = (Get-WmiObject -Class Win32_ComputerSystem).Domain
 $shortDomain = $domain.Split('.')[0]
 $user = "$shortDomain\$lcmUsername"
-$userAcl = $acl.Access | Where-Object {$_.IdentityReference -eq $user}
 
-# Show permissions for that user
-$userACL | Select-Object IdentityReference, ActiveDirectoryRights, AccessControlType
+# Get all groups the LCM user is a member of
+$userGroups = Get-ADUser $lcmUsername -Properties MemberOf |
+    Select-Object -ExpandProperty MemberOf |
+    ForEach-Object {
+        ($_ -split ',')[0] -replace '^CN=', "$shortDomain\"
+    }
+
+# Combine user identity and groups
+$identityRefs = @($user) + $userGroups
+
+# Filter ACL for entries that match the user or any of their groups
+$userAcl = $acl.Access | Where-Object { $identityRefs -contains $_.IdentityReference.Value }
+
+# Display results
+$userAcl | Select-Object IdentityReference, ActiveDirectoryRights, AccessControlType
 ```
 
 You should see output like the following:
@@ -72,23 +126,9 @@ The user should have the following permissions on the OU:
 * CreateChild 
 * DeleteChild 
  
- If you do not see all of these ActiveDirectoryRights listed for this user, please follow [instructions to prepare active directory](https://learn.microsoft.com/en-us/azure/azure-local/deploy/deployment-prep-active-directory?view=azloc-2503), including running the `AsHciADArtifactsPreCreationTool` listed in the wiki to ensure all permissions are set appropriately for the user.
+If you do not see all of these ActiveDirectoryRights listed for this user, please follow [instructions to prepare active directory](https://learn.microsoft.com/en-us/azure/azure-local/deploy/deployment-prep-active-directory?view=azloc-2503), including running the `AsHciADArtifactsPreCreationTool` listed in the wiki to ensure all permissions are set appropriately for the user. Ensure these same permissions are applied to all OU objects and their descendents.
 
-Next, verify Invoke-Command commands with the CredSSP flag enabled are functionly properly. Try:
-
-```Powershell
-$deploymentCred = Get-Credential
-$targetHostname = "<target_hostname>" # Replace with your target host
-Invoke-Command -ComputerName $targetHostname -Credential $deploymentCred -Authentication Credssp -ScriptBlock {whoami}
-
-$targetIp = "<target_ip>" # Replace with your target IP address
-Invoke-Command -ComputerName $targetIp -Credential $deploymentCred -Authentication Credssp -ScriptBlock {whoami}
-```
-**You should attempt this with the CredSSP enabled flag using both hostname and ip for every node in your cluster to ensure it works across all nodes**
-
-If either of the Invoke-Command commands fail, try the mitigation script in the [Reset CredSSP Registry Keys Section](#reset-credssp-registry-keys).
-
- Finally, verify the TrustedHosts WinRM configuration is set up correctly. 
+### WinRM Trusted Hosts Configuration
 
 ```Powershell
 Get-Item WSMan:\localhost\Client\TrustedHosts
@@ -116,11 +156,38 @@ Import-Module "ECEClient" 3>$null 4>$null
 Import-Module "C:\Program Files\WindowsPowerShell\Modules\Microsoft.AS.Infra.Security.SecretRotation\Microsoft.AS.Infra.Security.ActionPlanExecution.psm1" -DisableNameChecking
 Import-Module "C:\Program Files\WindowsPowerShell\Modules\Microsoft.AS.Infra.Security.SecretRotation\PasswordUtilities.psm1" -DisableNameChecking
 
-# Validate that the username provided by customer is of the correct format. Username should be provided without domain and not contain any special characters.
-ValidateIdentity -Username $credential.UserName
+# Validate that the username provided is of the correct format. Username should be provided without domain and not contain any special characters.
+if ($credential.UserName -match '^[^\\]+(?=\\)|(?<=@).+$') {
+    throw "Please provide user Identity without domain."
+}
 
-# Convert the SecureString password to an encrypted standard string
-$encryptedPassword = $credential.GetNetworkCredential().Password | Protect-CmsMessage -To "CN=RuntimeParameterEncryptionCert"
+# Create ECE client and get the stamp version
+$eceClient = Create-ECEClusterServiceClient
+$stampVersion = $eceClient.GetStampVersion().GetAwaiter().GetResult()
+
+# Define certificate path
+$certPath = "Cert:\LocalMachine\My"  # Change this path if the cert is located elsewhere
+
+# Check if RuntimeParameterEncryptionCert exists
+$certName = "RuntimeParameterEncryptionCert"
+$certificate = Get-ChildItem -Path $certPath | Where-Object { $_.Subject -like "*$certName*" }
+
+# If RuntimeParameterEncryptionCert is not found, check for DscEncryptionCert
+if (-not $certificate) {
+    Write-AzsSecurityVerbose -Message "RuntimeParameterEncryptionCert not found. Checking for DscEncryptionCert." -Verbose
+    $certName = "DscEncryptionCert"
+    $certificate = Get-ChildItem -Path $certPath | Where-Object { $_.Subject -like "*$certName*" }
+
+    # If DscEncryptionCert is also not found, throw an error
+    if (-not $certificate) {
+        throw "Neither RuntimeParameterEncryptionCert nor DscEncryptionCert found in the certificate store."
+    }
+} else {
+    Write-AzsSecurityVerbose -Message "Found RuntimeParameterEncryptionCert." -Verbose
+}
+
+# Convert the SecureString password to an encrypted standard string using the selected certificate
+$encryptedPassword = $credential.GetNetworkCredential().Password | Protect-CmsMessage -To "CN=$certName"
 
 # Validate credentials in ECE
 $ValidateParams = @{
@@ -139,16 +206,13 @@ $ValidateParams['RuntimeParameters'] = @{
 Write-AzsSecurityVerbose -Message "Validating credentials in ECE.`r`nStarting action plan with Instance ID: $($ValidateParams.ActionPlanInstanceId)" -Verbose
 $ValidateActionPlanInstance = Start-ActionPlan @ValidateParams 3>$null 4>$null
 
-if ($ValidateActionPlanInstance -eq $null)
-{
+if ($ValidateActionPlanInstance -eq $null) {
     Write-AzsSecurityWarning -Message "There was an issue running the action plan. Please reach out to Microsoft support for help" -Verbose
 }
-elseif ($ValidateActionPlanInstance.Status -eq 'Failed')
-{
+elseif ($ValidateActionPlanInstance.Status -eq 'Failed') {
     Write-AzsSecurityWarning -Message "Could not find matching credentials in ECE store." -Verbose
 }
-elseif ($ValidateActionPlanInstance.Status -eq 'Completed')
-{
+elseif ($ValidateActionPlanInstance.Status -eq 'Completed') {
     Write-AzsSecurityVerbose -Message "Found matching credentials in ECE store." -Verbose
 }
 ```
@@ -163,8 +227,11 @@ $credential = Get-Credential
 # Import the necessary module
 Import-Module "C:\Program Files\WindowsPowerShell\Modules\Microsoft.AS.Infra.Security.SecretRotation\PasswordUtilities.psm1" -DisableNameChecking
 
-# Validate that the username provided by customer is of the correct format. Username should be provided without domain and not contain any special characters.
-ValidateIdentity -Username $credential.UserName
+# Validate that the username provided is of the correct format. Username should be provided without domain and not contain any special characters.
+if($credential.UserName -match '^[^\\]+(?=\\)|(?<=@).+$')
+{
+    throw "Please provide user Identity without domain."
+}
 
 # Check the status of the ECE cluster group
 $eceClusterGroup = Get-ClusterGroup | Where-Object { $_.Name -eq "Azure Stack HCI Orchestrator Service Cluster Group" }
