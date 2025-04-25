@@ -4,7 +4,7 @@ During deployment, update, or add-node you may encounter 'Access Denied'. Some e
 During deployment you might see the following error message(s)
 
 ```
-Exception: Connecting to remote server xxx failed with the following error message : Access is denied
+Exception: Connecting to remote server <hostname/IP> failed with the following error message: Access is denied
 ```
 
 ```
@@ -30,20 +30,18 @@ If you encounter an "Access Denied" error during deployment, update, or node add
 ```PowerShell
 $credential = Get-Credential # Input your LCM (deployment user) credentials
 
-$targetHostname = "<target_hostname>" # This is your target host
+$targetHostname = "<target_hostname>" # Replace with your target host
 Invoke-Command -computername $targetHostname -credential $credential -scriptblock {hostname}
-Invoke-Command -computername $targetHostname -credential $credential -scriptblock {hostname} -Authentication Credssp
 
-$targetIp = "<target_ip_address>" # This is your target IP address
+$targetIp = "<target_ip>" # Replace with your target IP address
 Invoke-Command -computername $targetIp -credential $credential -scriptblock {hostname}
-Invoke-Command -computername $targetIp -credential $credential -scriptblock {hostname} -Authentication Credssp
 ```
 
 **You should attempt this using both hostname and ip for every node in your cluster to ensure it works across all nodes**
 
-If you receive an error stating the connection failed, you should verify that the credentials in the ECE store match the LCM user credentials in Active Directory. To do this, run the validation and mitigation script in the [Validating LCM (user deployment) credentials match the ECE Store section](#validating-lcm-user-deployment-credentials-match-the-ece-store). 
+If you receive an error stating the connection failed, you should verify the credentials and update using the [Set-AzureStackLCMUserPassword](https://learn.microsoft.com/en-us/azure/azure-local/manage/manage-secrets-rotation?view=azloc-24112#run-set-azurestacklcmuserpassword-cmdlet) cmdlet. Once Invoke-Command works, you should check the credentials in the ECE store match the LCM user credentials in Active Directory. To do this, run the validation and mitigation script in the [Validating LCM (user deployment) credentials match the ECE Store section](#validating-lcm-user-deployment-credentials-match-the-ece-store). 
 
-If there is no error with connecting to the node using the credentials, verify the Active Directory permissions are set properly for the LCM user. Log into the domain controller node using the LCM user credentials and run the following to get the Access Control List (ACL) for the user on the OU. Please replace the LCM username in the script with your LCM username.
+Next, verify the Active Directory permissions are set properly for the LCM user. Log into the domain controller node using the LCM user credentials and run the following to get the Access Control List (ACL) for the user on the OU. Please replace the LCM username in the script with your LCM username and the sample OU with your environment OU.
 
 ```Powershell
 $ou = "OU=MyOU,DC=domain,DC=com"
@@ -80,8 +78,11 @@ Next, verify Invoke-Command commands with the CredSSP flag enabled are functionl
 
 ```Powershell
 $deploymentCred = Get-Credential
-Invoke-Command -ComputerName <node hostname> -Credential $deploymentCred -Authentication Credssp -ScriptBlock {whoami}
-Invoke-Command -ComputerName <node ip address> -Credential $deploymentCred -Authentication Credssp -ScriptBlock {whoami}
+$targetHostname = "<target_hostname>" # Replace with your target host
+Invoke-Command -ComputerName $targetHostname -Credential $deploymentCred -Authentication Credssp -ScriptBlock {whoami}
+
+$targetIp = "<target_ip>" # Replace with your target IP address
+Invoke-Command -ComputerName $targetIp -Credential $deploymentCred -Authentication Credssp -ScriptBlock {whoami}
 ```
 **You should attempt this with the CredSSP enabled flag using both hostname and ip for every node in your cluster to ensure it works across all nodes**
 
@@ -228,20 +229,14 @@ Write-Output "Your LCM username is: $($DAdmin.Credential.Credential.UserName)"
 ```Powershell
 # Set properties of CredentialsDelegation key
 Set-ItemProperty -Path HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation -Name AllowFreshCredentials -Value 1 -Type DWORD -Force
-
 Set-ItemProperty -Path HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation -Name AllowFreshCredentialsWhenNTLMOnly -Value 1 -Type DWORD -Force
-
 Set-ItemProperty -Path HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation -Name ConcatenateDefaults_AllowFresh -Value 1 -Type DWORD -Force
-
 Set-ItemProperty -Path HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation -Name ConcatenateDefaults_AllowFreshNTLMOnly -Value 1 -Type DWORD -Force
 
 # Create CredentialsDelegation sub-keys, if needed
 New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation\AllowFreshCredentials" -ItemType Directory -Force
-
 New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation\AllowFreshCredentialsWhenNTLMOnly" -ItemType Directory -Force
-
 # Set properties of CredentialsDelegation sub-keys
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation\AllowFreshCredentials" -Name "1" -Value "wsman/*" -Type String -Force
-
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation\AllowFreshCredentialsWhenNTLMOnly" -Name "1" -Value "wsman/*" -Type String -Force
 ```
