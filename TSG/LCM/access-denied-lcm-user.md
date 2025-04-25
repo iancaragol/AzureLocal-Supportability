@@ -69,12 +69,12 @@ Invoke-Command -ComputerName $targetIp -Credential $credential -Authentication C
 
 If there are no issues running the previous script, then proceed to **Step 3**, otherwise:
 
-1. If no Invoke-Command works (with or without CredSSP), double check you have entered the right the LCM user credentials. If you are certain they are correct, then check the [WinRM Trusted Hosts configuration](#winrm-trusted-hosts-configuration) is set up properly to include all hostnames and IPs of all nodes in your cluster.
+1. If no Invoke-Command works (with or without CredSSP), double check you have entered the right LCM user credentials. If you are certain they are correct, then check the [WinRM Trusted Hosts configuration](#winrm-trusted-hosts-configuration) is set up properly to include all hostnames and IPs of all nodes in your cluster.
 2. If Invoke-Command without CredSSP works, but CredSSP does not work, try [resetting the CredSSP registry keys](#reset-credssp-registry-keys).
 3. If Invoke-Command with hostname works, but using the IP does not work, ensure the [WinRM Trusted Hosts configuration](#winrm-trusted-hosts-configuration) is set up properly to include all IPs of all nodes in your cluster.
  
 ### Step 3: Verify the LCM credential in AD matches ECE Store
-If invoke-command works, then first validate the credential exists in ECE store by running the script in the [Validating LCM (user deployment) credentials match the ECE Store](#validating-lcm-user-deployment-credentials-match-the-ece-store) section. If this script returns that they do not match, run the mitigation script from the same section.
+If Invoke-Command works, then validate the credential exists in ECE store by running the script in the [Validating LCM (user deployment) credentials match the ECE Store](#validating-lcm-user-deployment-credentials-match-the-ece-store) section. If this script returns that they do not match, run the mitigation script from the same section.
 
 ### Step 4: Check LCM user permissions on the OU
 Verify the Active Directory permissions are set properly for the LCM user. Log into the domain controller node using the LCM user credentials and run the following to get the Access Control List (ACL) for the user on the OU. Replace the LCM username in the script with your LCM username and the sample OU with your environment OU.
@@ -144,7 +144,7 @@ Set-Item WSMan:\localhost\Client\TrustedHosts -Value <ip address>
 ### Validating LCM (User Deployment) Credentials Match the ECE Store
 
 ### Prerequisites
-Ensure the certificate with subject name CN=RuntimeParameterEncryptionCert is not missing or expired. If so, please run [Start-SecretRotation](https://learn.microsoft.com/en-us/azure/azure-local/manage/manage-secrets-rotation?view=azloc-24113) to rotate certificates.
+Ensure the certificate with subject name CN=RuntimeParameterEncryptionCert, or CN=DscEncryptionCert is not missing or expired. If so, please run [Start-SecretRotation](https://learn.microsoft.com/en-us/azure/azure-local/manage/manage-secrets-rotation?view=azloc-24113) to rotate certificates.
 
 Please input your LCM user credentials when prompted. **DO NOT include the domain as part of the username in the credential**.
 
