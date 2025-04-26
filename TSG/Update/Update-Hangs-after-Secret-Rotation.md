@@ -53,18 +53,19 @@ Message     : Microsoft.AzureStack.HciOrchestratorService.WinSvcHost.exe
 
 
 # Cause
-ECE Service uses common-infra to handle Auth for HTTP calls. When the Auth fails, we will attempt to log information about the request such as Correlation ID, Correlation Vector, Certificate Subject, Certificate Thumbprint. The issue is that the correlation ID and Correlation Vector can be null which causes a null reference exception.
+There are two possible known causes: The root certificate is missing on a node, a service or script is calling Orchestration Service with an old client certificate.
 
-We have seen that there are two callers that caused this to happen: Start-MonitoringActionplanInstanceToComplete and LCMController. 
+## Missing Root Certificate
+When installing certificates we would skip those as in the past they usually indicated that the node was powered off or unreachble due to network issues. However we have found that in some cases someone has manually marked the node as offline or Failover Cluster has ejected it the node from the cluster but are still reachable.
 
-We believe there could be other services or scripts that are using the old ECE service client certificate but have not seen any evidence.
+## Calling with Bad Client Certificate 
+ECE Service uses common-infra to handle Auth for HTTP calls. When the Auth fails, we will attempt to log information about the request such as Correlation ID, Correlation Vector, Certificate Subject, Certificate Thumbprint. The issue is that the correlation ID and Correlation Vector can be null which causes a null reference exception. We have seen that there are two callers that caused this to happen: Start-MonitoringActionplanInstanceToComplete and LCMController. We believe there could be other services or scripts that are using the old ECE service client certificate but have not seen any evidence.
 
-## Start-MonitoringActionplanInstanceToComplete
-A secondary issue is that Start-MonitoringActionplanInstanceToComplete loads the ECE service client certificate and then polls ECE service for an action plan. Once secret rotation happens the certificate is now invalid which then causes ECE service to crash.
+### Start-MonitoringActionplanInstanceToComplete
+The Start-MonitoringActionplanInstanceToComplete cmdlet loads the ECE service client certificate and then polls ECE service for an action plan. Once secret rotation happens the certificate is now invalid which then causes ECE service to crash.
 
-## LCMController
-This is an Arc extension and is not a part of the secret rotation process. They took a dependency on our certificates but since they are not part of secret rotation they will continue to use the old certificate after we have performed rotation.
-
+### LCMController
+This is an Arc extension and is not a part of the secret rotation process. This service took a dependency on Azure Local certificates but since they are not part of secret rotation they will continue to use the old certificate after we have performed rotation.
 
 # Mitigation Details
 
@@ -101,6 +102,76 @@ Function Restart-LCM {
             Write-Host "[$env:COMPUTERNAME]: LCMController is not running."
         }
 
+    }
+}
+```
+
+## Ensure Root Certificates are installed on all Nodes
+
+This will ensure that the root certificates are correctly installed on all nodes.
+
+```powershell
+Function Import-AzureLocalRoots {
+    [CmdletBinding()]
+    param()
+
+    # Get the list of nodes to instal the roots on
+    $nodes = (Get-ClusterNode).Name
+
+    # This installs the Service and PKU2U roots to the root store. In 
+    # addition, we have to install the PKU2U root to the Local Cert 
+    # Issuer store in order for PKU2U to work. If the certificate is 
+    # already installed windows will not install a duplicate.
+    [scriptblock]$scriptBlock = {
+        $serviceRootPath = "C:\ClusterStorage\Infrastructure_1\Shares\SU1_Infrastructure_1\AzureStackCertificateAuthority\AzureStackCertificationAuthority.cer"
+        $pku2uRootPath = "C:\ClusterStorage\Infrastructure_1\Shares\SU1_Infrastructure_1\AzureStackCertificateAuthority\AzureStackCertificationAuthorityPKU2U.cer"
+
+        if (!(Test-Path $serviceRootPath)) {
+            throw "Missing Service Root Certificate in Share! Path: '$($serviceRootPath)'"
+        }
+
+        if (!(Test-Path $pku2uRootPath)) {
+            throw "Missing PKU2U Root Certificate in Share! Path: '$($pku2uRootPath)'"
+        }
+
+        Function Test-ForRoot {
+            [CmdletBinding()]
+            param(
+                [string]$Path,
+                [string]$Store
+            )
+            [System.Security.Cryptography.X509Certificates.X509Certificate2]$rootPft = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new($Path)
+            $checkStoreForPfx = Get-ChildItem "$Store\$($rootPft.Thumbprint)" -ErrorAction SilentlyContinue
+
+            if ($checkStoreForPfx) {
+                Write-Host "`t`t'Certificate already installed with thumbprint '$($rootPft.Thumbprint)'"
+            }
+            else {
+                Write-Host "`t`t'Installing certificate with thumbprint '$($rootPft.Thumbprint)'"
+                Import-Certificate `
+                    -CertStoreLocation $Store `
+                    -FilePath $Path | Out-Null
+            }
+            Write-Host " "
+        }
+
+        Write-Host "`tAttempting to Install AzureStackCertificationAuthority to Root Store"
+        Test-ForRoot -Path $serviceRootPath -Store "Cert:\LocalMachine\Root"
+
+        Write-Host "`tAttempting to Install AzureStackCertificationAuthorityPKU2U to Root Store"
+        Test-ForRoot -Path $pku2uRootPath -Store "Cert:\LocalMachine\Root"
+
+        Write-Host "`tAttempting to Install AzureStackCertificationAuthorityPKU2U to Local Cert Issuer Store"
+        Test-ForRoot -Path $pku2uRootPath -Store "Cert:\LocalMachine\Local Cert Issuer\"
+    };
+
+    # This ensures that messages do not overlap
+    foreach ($node in $nodes) {
+        Write-Host "Installing Roots on '$node'"
+        Invoke-Command `
+            -ComputerName $node `
+            -ScriptBlock $scriptBlock
+        Write-Host " "
     }
 }
 ```
@@ -156,8 +227,8 @@ Function Restart-AzureLocalServices {
 }
 ```
 
-## **(Impacts Production)** Restart each node one at a time
-There could be some unknown service or script running which is using the old client certificate. This is the option of last resort and will ensure that the client certificate is not being used anymore. Only do this if you have no production workloads running.
+## Reach out to Customer Support
+If the issue has not been resolved by any of the above, please contact Microsoft Support.
 
 # Validation
 After each mitigation you can check to see if ECE has stopped crashing and update has progressed. If so the issue for this TSG was resolved.
