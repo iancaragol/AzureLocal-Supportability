@@ -26,28 +26,58 @@ update package download failure with details similar to "Action plan GetCauDevic
 
 # Issue Validation
 
-### Step 1: Check if LCM user is in the Local Administrators Group
-Run the script below, replacing the `lcmUser` variable with your LCM (deployment) user. If you do not know your LCM username, please view the [Retrieving your LCM (user deployment) username section](#retrieving-your-lcm-deployment-user-username). If you do not know your LCM user credentials, then you will need to recreate the LCM user and follow this document to ensure the LCM user is set up properly.
+Before running the following steps, please log into a node with the LCM user credential to ensure the credential works. If you do not know your LCM username, please view the [Retrieving your LCM (user deployment) username section](#retrieving-your-lcm-deployment-user-username). If you do not know your LCM user credentials, then you will need to recreate the LCM user and follow this document to ensure the LCM user is set up properly.
+
+### Step 1: Check if LCM user is in the Local Administrators Group on all cluster nodes
+Run the script below, replacing the `lcmUser` variable with your LCM (deployment) user on all cluster nodes. 
+
 ```Powershell
-# Check if LCM user is in the Local Administrators group
-$lcmUser = 'DOMAIN\LCMUser'  # Replace 'DOMAIN\LCMUser' with the actual LCM username
+# Set your LCM user and the list of groups that contain the LCM user
+$lcmUser = 'DOMAIN\LCMUser'
+$groupsContainingLCMUser = @(
+    'DOMAIN\Group1',
+    'DOMAIN\Group2',
+    'DOMAIN\Group3'
+)
 
-# Get the list of members in the local Administrators group
-$admins = Get-LocalGroupMember -Group 'Administrators'
+Write-Output "Checking if any of the specified groups are in the local Administrators group..."
 
-# Check if the LCM user is in the group
-if ($admins.Name -contains $lcmUser) {
-    Write-Output "$lcmUser is in the local Administrators group."
-} else {
-    Write-Output "$lcmUser is NOT in the local Administrators group."
-    
-    # If not in the Administrators group, add the user
-    try {
-        Add-LocalGroupMember -Group 'Administrators' -Member $lcmUser
-        Write-Output "$lcmUser was successfully added to the local Administrators group."
-    } catch {
-        Write-Error "Failed to add $lcmUser to the Administrators group. Error: $_"
+try {
+    $adminGroupMembers = Get-LocalGroupMember -Group 'Administrators'
+} catch {
+    Write-Error "Failed to retrieve Administrators group members. Error: $_"
+    return
+}
+
+$found = $false
+
+foreach ($group in $groupsContainingLCMUser) {
+    if ($adminGroupMembers.Name -contains $group) {
+        Write-Output "Group '$group' is in the Administrators group."
+        $found = $true
+        break
     }
+}
+
+if ($found) {
+    Write-Output "$lcmUser has administrative rights via one of the specified groups."
+} else {
+    Write-Output "$lcmUser does NOT have administrative rights via the specified groups."
+}
+```
+
+If the script shows that the `lcmUser` is not in the local Administrators group, then run the mitigation below:
+
+```Powershell
+# Replace 'DOMAIN\LCMUser' with your actual LCM username
+$lcmUser = 'DOMAIN\LCMUser'
+
+Write-Output "Attempting to add $lcmUser to the local Administrators group..."
+try {
+    Add-LocalGroupMember -Group 'Administrators' -Member $lcmUser
+    Write-Output "$lcmUser was successfully added to the local Administrators group."
+} catch {
+    Write-Error "Failed to add $lcmUser to the Administrators group. Error: $_"
 }
 ```
 
