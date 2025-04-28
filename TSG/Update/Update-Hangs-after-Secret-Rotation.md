@@ -9,8 +9,9 @@ During Update the progress will stall after secret rotation.
    * Update is usually trying to update the Lifecycle Agents which is the step after secret rotation.
 2. ECE Service (HCI Orchestrator) is crashing.
 
-You can use the following Cmdlet to check to see if the service is crashing.
+You can use the following Cmdlet to check to see if the service is crashing. Just paste the script into the PowerShell window and run ```Get-OrchestrationLastCrash```.
 
+### Script
 ```PowerShell
 Function Get-OrchestrationLastCrash {
     [CmdletBinding()]
@@ -19,13 +20,14 @@ Function Get-OrchestrationLastCrash {
         [ValidateNotNullOrEmpty()]
         [string]$Executable = "HciOrchestratorService.WinSvcHost.exe"
     )
-    $startTime = (Get-Date).AddDays(-1)
+    
     # We want to check all nodes
     # Get the node that Orchestration Service is running on
     $node = (Get-ClusterGroup *Orc*).OwnerNode
 
     # Just grab the exceptions from that node
     $error_messages = Invoke-Command -ComputerName $node -ScriptBlock {
+        $startTime = (Get-Date).AddHours(-1)
         Get-WinEvent -FilterHashtable @{LogName = "Application"; StartTime = $($startTime); ID = 1000 } -ErrorAction SilentlyContinue
     } 
 
@@ -36,7 +38,8 @@ Function Get-OrchestrationLastCrash {
 }
 ```
 
-If this is the same issue for this TSG you should see the following stack trace. We are throwing from MtlsCertificateException
+Once you run the cmdlet if you see the following event this TSG you should see the following stack trace containing MtlsCertificateException.
+
 ```
 TimeCreated : SomeDate
 MachineName : TheMachineName
@@ -53,23 +56,11 @@ Message     : Microsoft.AzureStack.HciOrchestratorService.WinSvcHost.exe
 
 
 # Cause
-There are two possible known causes: The root certificate is missing on a node, a service or script is calling Orchestration Service with an old client certificate.
-
-## Missing Root Certificate
-When installing certificates we would skip those as in the past they usually indicated that the node was powered off or unreachble due to network issues. However we have found that in some cases someone has manually marked the node as offline or Failover Cluster has ejected it the node from the cluster but are still reachable.
-
-## Calling with Bad Client Certificate 
-ECE Service uses common-infra to handle Auth for HTTP calls. When the Auth fails, we will attempt to log information about the request such as Correlation ID, Correlation Vector, Certificate Subject, Certificate Thumbprint. The issue is that the correlation ID and Correlation Vector can be null which causes a null reference exception. We have seen that there are two callers that caused this to happen: Start-MonitoringActionplanInstanceToComplete and LCMController. We believe there could be other services or scripts that are using the old ECE service client certificate but have not seen any evidence.
-
-### Start-MonitoringActionplanInstanceToComplete
-The Start-MonitoringActionplanInstanceToComplete cmdlet loads the ECE service client certificate and then polls ECE service for an action plan. Once secret rotation happens the certificate is now invalid which then causes ECE service to crash.
-
-### LCMController
-This is an Arc extension and is not a part of the secret rotation process. This service took a dependency on Azure Local certificates but since they are not part of secret rotation they will continue to use the old certificate after we have performed rotation.
+There are two possible known causes, either the root certificate is missing on a node or a service/script is calling Orchestration Service with an old client certificate.
 
 # Mitigation Details
 
-There are multiple mitigations, start from the first and stop when you see the issue go away.
+There are multiple mitigations, start from the first and stop when you see the issue go away. Usually Orchestration service crashes once every 1 minute or so, so make sure to wait a little before checking by using ```Get-OrchestrationLastCrash``` and checking that the TimeCreated value is after the running the mitigation.
 
 ## **(No Production Impact)** Terminate Start-MonitoringActionplanInstanceToComplete
 
@@ -77,7 +68,7 @@ As state above this cmdlet has an issue with handling secret rotation. If someon
 
 ## **(No Production Impact)** Restart LCM Extension on all Nodes
 
-We have found that LCM Controller will continue to use a certificate after we have performed secret rotation. This will restart LCM Controller on the node in which it is running.
+We have found that LCM Controller will continue to use a certificate after we have performed secret rotation. This will restart LCM Controller on the node in which it is running. Paste the following script them run ```Restart-LCM```.
 
 ```powershell
 Function Restart-LCM {
@@ -108,14 +99,16 @@ Function Restart-LCM {
 
 ## Ensure Root Certificates are installed on all Nodes
 
-This will ensure that the root certificates are correctly installed on all nodes.
+This script will ensure that the root certificates are correctly installed on all nodes. Once you paste the script you can run in the same window as many times as you want by running ```Import-AzureLocalRoots```.
+
+### Script
 
 ```powershell
 Function Import-AzureLocalRoots {
     [CmdletBinding()]
     param()
 
-    # Get the list of nodes to instal the roots on
+    # Get the list of nodes to install the roots on
     $nodes = (Get-ClusterNode).Name
 
     # This installs the Service and PKU2U roots to the root store. In 
@@ -179,6 +172,10 @@ Function Import-AzureLocalRoots {
 ## **(No Production Impact)** Restart all local Azure Local Services and Move all Clustered HCI Services
 
 This script moves all Azure Local Clustered Services to a new node and then restarts all local Azure Local services. The output is somewhat verbose, but it indicates when all services are being moved or restarted.
+
+Once you paste the Cmdlet you can run it by calling ```Restart-AzureLocalServices```.
+
+### Script
 ```powershell
 
 <#
@@ -194,17 +191,38 @@ Function Restart-AzureLocalServices {
 
     $nodes = (Get-ClusterNode).Name
 
+    # Single Node Cluster
+    if ($nodes.Length -eq 1)
+    {
+        $services = @(
+            'Azure Stack HCI Download Standalone Tool Agent',
+            'ECEAgent',
+            'URP Windows Service Service',
+            )
+        return;
+    }
+
+
     # This will move the cluster service to another node.
     Function Move-ClusterService($Name) {
-        Write-Local "$Name"
+
+        if ($nodes.Length -eq 1)
+        {
+            $Name = $Name.Replace(" Cluster Group", "")
+            Write-Local "Single Node Cluster, restarting '$Name' service"
+            $service = Get-Service 
+            $service | Stop-Service | Out-Null
+            $service | Start-Service | Out-Null
+
+            return;
+        }
 
         $group = Get-ClusterGroup $Name
         $sourceNode = $group.OwnerNode
         [string[]]$targetNodes = ($nodes | Where-Object { !$_.Equals($sourceNode) })
         $targetNode = $targetNodes[0]
 
-        Write-Local "Moving Cluster Group '$Name' from '$($sourceNode)' to '$($targetNode)' "
-
+        Write-Local "Moving Cluster Group '$Name' from '$($sourceNode)' to '$($targetNode)'"
         Move-ClusterGroup -Name $Name -Node $targetNode
     }
 
