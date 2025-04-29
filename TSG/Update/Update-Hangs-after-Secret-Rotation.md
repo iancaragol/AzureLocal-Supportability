@@ -191,17 +191,6 @@ Function Restart-AzureLocalServices {
 
     $nodes = (Get-ClusterNode).Name
 
-    # Single Node Cluster
-    if ($nodes.Length -eq 1)
-    {
-        $services = @(
-            'Azure Stack HCI Download Standalone Tool Agent',
-            'ECEAgent',
-            'URP Windows Service Service',
-            )
-        return;
-    }
-
 
     # This will move the cluster service to another node.
     Function Move-ClusterService($Name) {
@@ -210,7 +199,7 @@ Function Restart-AzureLocalServices {
         {
             $Name = $Name.Replace(" Cluster Group", "")
             Write-Local "Single Node Cluster, restarting '$Name' service"
-            $service = Get-Service 
+            $service = Get-Service $Name
             $service | Stop-Service | Out-Null
             $service | Start-Service | Out-Null
 
@@ -218,7 +207,7 @@ Function Restart-AzureLocalServices {
         }
 
         $group = Get-ClusterGroup $Name
-        $sourceNode = $group.OwnerNode
+        $sourceNode = $group.OwnerNode.Name
         [string[]]$targetNodes = ($nodes | Where-Object { !$_.Equals($sourceNode) })
         $targetNode = $targetNodes[0]
 
