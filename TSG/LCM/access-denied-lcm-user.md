@@ -113,7 +113,7 @@ If there are no issues running the previous script, then proceed to **Step 3**, 
 If Invoke-Command works, then validate the credential exists in ECE store by running the script in the [Validating LCM (user deployment) credentials match the ECE Store](#validating-lcm-user-deployment-credentials-match-the-ece-store) section. If this script returns that they do not match, run the mitigation script from the same section.
 
 ### Step 4: Check LCM user permissions on the OU
-Verify the Active Directory permissions are set properly for the LCM user. Log into the domain controller node using the LCM user credentials and run the following to get the Access Control List (ACL) for the user on the OU. Replace the LCM username in the script with your LCM username and the sample OU with your environment OU.
+Verify the Active Directory permissions are set properly for the LCM user. Log into the domain controller node using the LCM user credentials and run the following to get the Access Control List (ACL) for the user on the OU. Replace the LCM username in the script with your LCM username and the sample OU with your environment OU. You can get the OU by running `Get-ADOrganizationalUnit -Filter *` on the domain controller (DC) node. You should also check the permissions of any groups that the LCM user belongs to, since they are inherited by the LCM user.
 
 ```Powershell
 # Define the target OU (update to match your environment)
@@ -130,29 +130,8 @@ $domain = (Get-WmiObject -Class Win32_ComputerSystem).Domain
 $shortDomain = $domain.Split('.')[0]
 $user = "$shortDomain\$lcmUsername"
 
-# Get all groups the LCM user is a member of
-$userGroups = Get-ADUser $lcmUsername -Properties MemberOf |
-    Select-Object -ExpandProperty MemberOf |
-    ForEach-Object {
-        ($_ -split ',')[0] -replace '^CN=', "$shortDomain\" 
-    }
-
-# Combine user identity and groups
-$identityRefs = @($user) + $userGroups
-
-# Loop through each identity reference
-foreach ($identity in $identityRefs) {
-    # Remove domain part from the identity reference (e.g., domain\username -> username)
-    $identityWithoutDomain = $identity -replace "^$shortDomain\\", ""
-
-    # Filter ACL for entries that match the current identity reference (without domain)
-    $identityAcl = $acl.Access | Where-Object { 
-        $_.IdentityReference.Value -like "*\$identityWithoutDomain*" 
-    }
-
-    # Display results for the current identity reference
-    $identityAcl | Select-Object IdentityReference, ActiveDirectoryRights, AccessControlType
-}
+$userAcl = $acl.Access | Where-Object { $_.IdentityReference -like "*$user*" }
+$userAcl | Select-Object IdentityReference, ActiveDirectoryRights, AccessControlType
 ```
 
 You should see output like the following:
