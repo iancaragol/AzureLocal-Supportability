@@ -362,20 +362,4 @@ Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDel
 ```
 
 ### Check NTLM is not Blocked by GPO
-Ensure the LmCompatibilityLevel is <= 3 and  using the command in the script below.
-
-```Powershell
-Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name "LmCompatibilityLevel"
-Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0" -Name "RestrictSendingNTLMTraffic"
-```
-
-If the LmCompatibilityLevel is too high, use the following script to lower it:
-
-```Powershell
-Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name "LmCompatibilityLevel" -Value 3
-```
-
-If RestrictSendingNTLMTraffic is nonzero, set it to zero:
-```Powershell
-Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0" -Name "RestrictSendingNTLMTraffic" -Value 0
-```
+Verify that you do not have policies in your domain controller that are restricting NTLM access. Please review [Network security: Restrict NTLM: NTLM authentication in this domain](https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/security-policy-settings/network-security-restrict-ntlm-ntlm-authentication-in-this-domain).
