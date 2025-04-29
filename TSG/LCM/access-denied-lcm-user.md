@@ -40,7 +40,7 @@ $groupsContainingLCMUser = @(
     'DOMAIN\Group3'
 )
 
-Write-Output "Checking if any of the specified groups are in the local Administrators group..."
+Write-Output "Checking if the LCM user or any of the specified groups are in the local Administrators group..."
 
 try {
     $adminGroupMembers = Get-LocalGroupMember -Group 'Administrators'
@@ -51,18 +51,24 @@ try {
 
 $found = $false
 
+# Check if any of the groups are in the Administrators group
 foreach ($group in $groupsContainingLCMUser) {
     if ($adminGroupMembers.Name -contains $group) {
         Write-Output "Group '$group' is in the Administrators group."
         $found = $true
-        break
     }
 }
 
+# Check if LCM user is directly in the Administrators group
+if ($adminGroupMembers.Name -contains $lcmUser) {
+    Write-Output "User '$lcmUser' is directly in the Administrators group."
+    $found = $true
+}
+
 if ($found) {
-    Write-Output "$lcmUser has administrative rights via one of the specified groups."
+    Write-Output "$lcmUser has administrative rights either directly or via one of the specified groups."
 } else {
-    Write-Output "$lcmUser does NOT have administrative rights via the specified groups."
+    Write-Output "$lcmUser does NOT have administrative rights via the specified groups or directly."
 }
 ```
 
@@ -87,7 +93,7 @@ Verify the LCM user credentials work with all iterations of Invoke-Command with 
 ```PowerShell
 $credential = Get-Credential # Input your LCM (deployment user) credentials
 
-$targetHostname = "<target_hostname>" # Replace with your target host
+$targetHostname = "DOMAIN\<target_hostname>" # Replace with your target host
 $targetIp = "<target_ip>" # Replace with your target IP address
 
 Invoke-Command -computername $targetHostname -credential $credential -scriptblock {hostname}
@@ -101,7 +107,7 @@ If there are no issues running the previous script, then proceed to **Step 3**, 
 
 1. If no Invoke-Command works (with or without CredSSP), double check you have entered the right LCM user credentials. If you are certain they are correct, then check the [WinRM Trusted Hosts configuration](#winrm-trusted-hosts-configuration) is set up properly to include all hostnames and IPs of all nodes in your cluster.
 2. If Invoke-Command without CredSSP works, but CredSSP does not work, try [resetting the CredSSP registry keys](#reset-credssp-registry-keys).
-3. If Invoke-Command with hostname works, but using the IP does not work, ensure the [WinRM Trusted Hosts configuration](#winrm-trusted-hosts-configuration) is set up properly to include all IPs of all nodes in your cluster.
+3. If Invoke-Command with hostname works, but using the IP does not work, ensure the [WinRM Trusted Hosts configuration](#winrm-trusted-hosts-configuration) is set up properly to include all IPs of all nodes in your cluster and that a Group Policy Object (GPO) [is not blocking NTLM](#check-ntlm-is-not-blocked-by-gpo).
  
 ### Step 3: Verify the LCM credential in AD matches ECE Store
 If Invoke-Command works, then validate the credential exists in ECE store by running the script in the [Validating LCM (user deployment) credentials match the ECE Store](#validating-lcm-user-deployment-credentials-match-the-ece-store) section. If this script returns that they do not match, run the mitigation script from the same section.
@@ -124,18 +130,8 @@ $domain = (Get-WmiObject -Class Win32_ComputerSystem).Domain
 $shortDomain = $domain.Split('.')[0]
 $user = "$shortDomain\$lcmUsername"
 
-# Get all groups the LCM user is a member of
-$userGroups = Get-ADUser $lcmUsername -Properties MemberOf |
-    Select-Object -ExpandProperty MemberOf |
-    ForEach-Object {
-        ($_ -split ',')[0] -replace '^CN=', "$shortDomain\"
-    }
-
-# Combine user identity and groups
-$identityRefs = @($user) + $userGroups
-
 # Filter ACL for entries that match the user or any of their groups
-$userAcl = $acl.Access | Where-Object { $identityRefs -contains $_.IdentityReference.Value }
+$userAcl = $acl.Access | Where-Object { $_.IdentityReference -like "*$lcmUsername*" }
 
 # Display results
 $userAcl | Select-Object IdentityReference, ActiveDirectoryRights, AccessControlType
@@ -181,14 +177,29 @@ Please input your LCM user credentials when prompted. **DO NOT include the domai
 ```PowerShell
 $credential = Get-Credential
 
+# Validate credentials
+try {
+    # Attempt to invoke a simple command (Get-Process) on the local machine to validate credentials
+    Invoke-Command -ScriptBlock { whoami } -Credential $credential -ErrorAction Stop -ComputerName localhost
+
+    Write-Host "Credential validation successful." -ForegroundColor Green
+}
+catch {
+    Write-Host "Credential validation failed. Please check the username and password." -ForegroundColor Red
+    return
+}
+
 # Import necessary modules
 Import-Module "ECEClient" 3>$null 4>$null
 Import-Module "C:\Program Files\WindowsPowerShell\Modules\Microsoft.AS.Infra.Security.SecretRotation\Microsoft.AS.Infra.Security.ActionPlanExecution.psm1" -DisableNameChecking
 Import-Module "C:\Program Files\WindowsPowerShell\Modules\Microsoft.AS.Infra.Security.SecretRotation\PasswordUtilities.psm1" -DisableNameChecking
 
+# Print the User Name
+Write-Host "Username provided: $($credential.UserName)" -ForegroundColor Cyan
+
 # Validate that the username provided is of the correct format. Username should be provided without domain and not contain any special characters.
 if ($credential.UserName -match '^[^\\]+(?=\\)|(?<=@).+$') {
-    throw "Please provide user Identity without domain."
+    throw "Please provide user name without domain."
 }
 
 # Create ECE client and get the stamp version
@@ -254,13 +265,28 @@ Please input your LCM user credentials when prompted. **DO NOT include the domai
 # Prompt for credentials
 $credential = Get-Credential
 
+# Validate credentials
+try {
+    # Attempt to invoke a simple command (Get-Process) on the local machine to validate credentials
+    Invoke-Command -ScriptBlock { whoami } -Credential $credential -ErrorAction Stop -ComputerName localhost
+
+    Write-Host "Credential validation successful." -ForegroundColor Green
+}
+catch {
+    Write-Host "Credential validation failed. Please check the username and password." -ForegroundColor Red
+    return
+}
+
 # Import the necessary module
 Import-Module "C:\Program Files\WindowsPowerShell\Modules\Microsoft.AS.Infra.Security.SecretRotation\PasswordUtilities.psm1" -DisableNameChecking
+
+# Print the User Name
+Write-Host "Username provided: $($credential.UserName)" -ForegroundColor Cyan
 
 # Validate that the username provided is of the correct format. Username should be provided without domain and not contain any special characters.
 if($credential.UserName -match '^[^\\]+(?=\\)|(?<=@).+$')
 {
-    throw "Please provide user Identity without domain."
+    throw "Please provide user name without domain."
 }
 
 # Check the status of the ECE cluster group
@@ -336,4 +362,23 @@ New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation\
 # Set properties of CredentialsDelegation sub-keys
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation\AllowFreshCredentials" -Name "1" -Value "wsman/*" -Type String -Force
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation\AllowFreshCredentialsWhenNTLMOnly" -Name "1" -Value "wsman/*" -Type String -Force
+```
+
+### Check NTLM is not Blocked by GPO
+Ensure the LmCompatibilityLevel is <= 3 and  using the command in the script below.
+
+```Powershell
+Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name "LmCompatibilityLevel"
+Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0" -Name "RestrictSendingNTLMTraffic"
+```
+
+If the LmCompatibilityLevel is too high, use the following script to lower it:
+
+```Powershell
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name "LmCompatibilityLevel" -Value 3
+```
+
+If RestrictSendingNTLMTraffic is nonzero, set it to zero:
+```Powershell
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0" -Name "RestrictSendingNTLMTraffic" -Value 0
 ```
