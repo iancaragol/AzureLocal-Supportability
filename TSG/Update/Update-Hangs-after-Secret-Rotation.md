@@ -207,7 +207,7 @@ Function Restart-AzureLocalServices {
         }
 
         $group = Get-ClusterGroup $Name
-        $sourceNode = $group.OwnerNode
+        $sourceNode = $group.OwnerNode.Name
         [string[]]$targetNodes = ($nodes | Where-Object { !$_.Equals($sourceNode) })
         $targetNode = $targetNodes[0]
 
