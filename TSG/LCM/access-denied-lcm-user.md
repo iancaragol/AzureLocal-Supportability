@@ -130,11 +130,29 @@ $domain = (Get-WmiObject -Class Win32_ComputerSystem).Domain
 $shortDomain = $domain.Split('.')[0]
 $user = "$shortDomain\$lcmUsername"
 
-# Filter ACL for entries that match the user or any of their groups
-$userAcl = $acl.Access | Where-Object { $_.IdentityReference -like "*$lcmUsername*" }
+# Get all groups the LCM user is a member of
+$userGroups = Get-ADUser $lcmUsername -Properties MemberOf |
+    Select-Object -ExpandProperty MemberOf |
+    ForEach-Object {
+        ($_ -split ',')[0] -replace '^CN=', "$shortDomain\" 
+    }
 
-# Display results
-$userAcl | Select-Object IdentityReference, ActiveDirectoryRights, AccessControlType
+# Combine user identity and groups
+$identityRefs = @($user) + $userGroups
+
+# Loop through each identity reference
+foreach ($identity in $identityRefs) {
+    # Remove domain part from the identity reference (e.g., domain\username -> username)
+    $identityWithoutDomain = $identity -replace "^$shortDomain\\", ""
+
+    # Filter ACL for entries that match the current identity reference (without domain)
+    $identityAcl = $acl.Access | Where-Object { 
+        $_.IdentityReference.Value -like "*\$identityWithoutDomain*" 
+    }
+
+    # Display results for the current identity reference
+    $identityAcl | Select-Object IdentityReference, ActiveDirectoryRights, AccessControlType
+}
 ```
 
 You should see output like the following:
