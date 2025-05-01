@@ -5,3 +5,4 @@
 * [23H2 Deployment Failure at Validation task of "Azure Stack HCI Hardware"](./23H2-Deployment-Failure-at-Validation-task-of-Azure-Stack-HCI-Hardware.md)
 * [Firewall blocking required outbound access](./Firewall-blocking-required-outbound-access.md)
 * [Azure Local deployment failed with missing CloudCommon folder](./Azure-Local-deployment-failed-with-missing-CloudCommon-folder.md)
+* [Azure Local missing SPN during deployment 2411.3](./TSG-Azure-LOCAL-HCI-missing-spn.md)
