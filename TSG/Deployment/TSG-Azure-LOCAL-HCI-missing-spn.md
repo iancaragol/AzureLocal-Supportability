@@ -1,4 +1,4 @@
-# TSG | 23H2 | 10.2411.3.2 | Missing SP during deployment
+# TSG | 23H2 | 10.2411.3.2 | Missing SPN during deployment
 
 
 # Symptoms
