@@ -16,4 +16,4 @@
 * [2503 UpdatePrerequisites Failure: Remove older extensions (akshybrid, connectedmachine)](./UpdatePrerequisites-Failure-Remove-Older-Extensions.md) 
 * [Type 'UpdateArbAndExtensions' of Role 'MocArb' raised an exception: 'CredentialAdaptor' object has no attribute 'signed_session'](./Type-'UpdateArbAndExtensions'-of-Role-'MocArb'-raised-an-exception%253A-'CredentialAdaptor'-object-has-no-attribute-'signed_session'.md)
 * [Update Hangs after Secret Rotation](./Update-Hangs-after-Secret-Rotation.md)
-* [Update fails dasue of missing DeploymentLaunchType registry key](./Missing-DeploymentLaunchType-regkey-fails-update.md)
+* [Update fails due to missing DeploymentLaunchType registry key](./Missing-DeploymentLaunchType-regkey-fails-update.md)
