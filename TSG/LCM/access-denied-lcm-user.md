@@ -21,7 +21,7 @@ update package download failure with details similar to "Action plan GetCauDevic
 # Known Causes
 1. The LCM (deployment user) credentials were not updated properly using the [Set-AzureStackLCMUserPassword](https://learn.microsoft.com/en-us/azure/azure-local/manage/manage-secrets-rotation?view=azloc-24112#run-set-azurestacklcmuserpassword-cmdlet) cmdlet. This cmdlet is responsible for updating the password in Active Directory as well as updating it in the ECE Store. Both of these should be in sync, otherwise there will be access denied issues.
 2. The LCM user does not have sufficient permissions on the Organization Unit (OU) in Active Directory (AD).
-3. The cluster node's NTLM policy, configured via Group Policy, may be blocking remote operations such as Invoke-Command. This can occur if NTLM is restricted either at the OU level or on the individual nodes via applied Group Policy Objects (GPOs).
+3. The NTLM policy, configured via Group Policy, may be blocking remote operations such as Invoke-Command. This can occur if NTLM is restricted either at the OU level or on the individual nodes or the domain controller via applied Group Policy Objects (GPOs).
 4. The WinRM trusted hosts configuration is set up incorrectly.
 
 # Issue Validation
@@ -93,7 +93,7 @@ Verify the LCM user credentials work with all iterations of Invoke-Command with 
 ```PowerShell
 $credential = Get-Credential # Input your LCM (deployment user) credentials
 
-$targetHostname = "DOMAIN\<target_hostname>" # Replace with your target host
+$targetHostname = "<target_hostname>" # Replace with your target host
 $targetIp = "<target_ip>" # Replace with your target IP address
 
 Invoke-Command -computername $targetHostname -credential $credential -scriptblock {hostname}
@@ -157,10 +157,10 @@ If you do not see all of these ActiveDirectoryRights listed for this user, pleas
 Get-Item WSMan:\localhost\Client\TrustedHosts
 ```
 
-This file should contain the ips or hostnames of each of the nodes in your cluster. To add a host, use this command:
+This file should contain the ips or hostnames of each of the nodes in your cluster. To set this file, use this command and specify all hostnames and ip-addresses in your cluster delimited by commas.
 
 ```Powershell
-Set-Item WSMan:\localhost\Client\TrustedHosts -Value <ip address>
+Set-Item WSMan:\localhost\Client\TrustedHosts -Value hostname1,hostname2,192.168.0.1,192.168.0.2
 ```
 
 # Scripts
@@ -317,17 +317,38 @@ Write-AzsSecurityVerbose -Message "Finished updating credentials in ECE." -Verbo
 Run the following script on your HCI node to retrieve the LCM username:
 
 ```Powershell
-#Retrieve ECEWinService NuGet Version
-$eceWinServiceVersion = Get-ChildItem "C:\Agents" -Directory |
+# Retrieve the latest ECEWinService NuGet Version
+$eceWinService = Get-ChildItem "C:\Agents" -Directory |
     Where-Object { $_.Name -match 'Microsoft\.AzureStack\.Solution\.ECEWinService\.(\d+\.\d+\.\d+\.\d+)' } |
-    ForEach-Object { $matches[1] }
+    ForEach-Object {
+        [PSCustomObject]@{
+            Path = $_.FullName
+            Version = [version]$matches[1]
+        }
+    } |
+    Sort-Object Version -Descending |
+    Select-Object -First 1
 
-#Load Assemblies
-[System.Reflection.Assembly]::LoadFile("C:\Agents\Microsoft.AzureStack.Solution.ECEWinService.$eceWinServiceVersion\content\ECEWinService\CloudEngine.dll") | Out-Null
-[System.Reflection.Assembly]::LoadFile("c:\Agents\Microsoft.AzureStack.Solution.ECEWinService.$eceWinServiceVersion\content\ECEWinService\Microsoft.AzureStack.Orchestration.Common.Packaging.Contract.dll") | Out-Null
-[System.Reflection.Assembly]::LoadFile("c:\Agents\Microsoft.AzureStack.Solution.ECEWinService.$eceWinServiceVersion\content\ECEWinService\Microsoft.AzureStack.Orchestration.Common.Packaging.dll") | Out-Null
-[System.Reflection.Assembly]::LoadFile("c:\Agents\Microsoft.AzureStack.Solution.ECEWinService.$eceWinServiceVersion\content\ECEWinService\Microsoft.Diagnostics.Tracing.EventSource.dll") | Out-Null
-[System.Reflection.Assembly]::LoadFile("c:\Agents\Microsoft.AzureStack.Solution.ECEWinService.$eceWinServiceVersion\content\ECEWinService\Microsoft.AzureStack.Solution.MetricTelemetry.dll") | Out-Null
+$eceWinServiceVersion = $eceWinService.Version.ToString()
+$eceWinServicePath = $eceWinService.Path
+
+# Load Assemblies
+[System.Reflection.Assembly]::LoadFile("$eceWinServicePath\content\ECEWinService\CloudEngine.dll") | Out-Null
+[System.Reflection.Assembly]::LoadFile("$eceWinServicePath\content\ECEWinService\Microsoft.AzureStack.Orchestration.Common.Packaging.Contract.dll") | Out-Null
+[System.Reflection.Assembly]::LoadFile("$eceWinServicePath\content\ECEWinService\Microsoft.AzureStack.Orchestration.Common.Packaging.dll") | Out-Null
+[System.Reflection.Assembly]::LoadFile("$eceWinServicePath\content\ECEWinService\Microsoft.Diagnostics.Tracing.EventSource.dll") | Out-Null
+
+# Load MetricTelemetry.dll if it exists, otherwise fallback to Telemetry.dll
+$metricTelemetryPath = "$eceWinServicePath\content\ECEWinService\Microsoft.AzureStack.Solution.MetricTelemetry.dll"
+$telemetryPath = "$eceWinServicePath\content\ECEWinService\Microsoft.AzureStack.Solution.Telemetry.dll"
+
+if (Test-Path $metricTelemetryPath) {
+    [System.Reflection.Assembly]::LoadFile($metricTelemetryPath) | Out-Null
+} elseif (Test-Path $telemetryPath) {
+    [System.Reflection.Assembly]::LoadFile($telemetryPath) | Out-Null
+} else {
+    Write-Warning "Neither MetricTelemetry.dll nor Telemetry.dll found in $eceWinServicePath"
+}
 
 #Retrieve LCM User Username
 Import-Module ECEClient 3>$null 4>$null
