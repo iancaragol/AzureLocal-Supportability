@@ -6,3 +6,4 @@
 * [Firewall blocking required outbound access](./Firewall-blocking-required-outbound-access.md)
 * [Azure Local deployment failed with missing CloudCommon folder](./Azure-Local-deployment-failed-with-missing-CloudCommon-folder.md)
 * [Azure Local missing SPN during deployment 2411.3](./TSG-Azure-LOCAL-HCI-missing-spn.md)
+* [Type 'DeployPreRequisites' of Role 'MocArb' raised an exception: ERROR: An error occurred. Pip failed with status code 1. Use --debug for more information.](./Type-DeployPreRequisites-of-Role-MocArb-raised-an-exception-ERROR-An-error-occurred-Pip-failed-with-status-code11.md)
