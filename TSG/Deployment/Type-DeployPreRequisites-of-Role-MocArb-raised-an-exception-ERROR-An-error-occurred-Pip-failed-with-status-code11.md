@@ -43,6 +43,7 @@ To resolve this issue, it is necessary to manaully download the certificate. Fol
 1.  **Download certificate (in all nodes)**:
 ```Powershell
 iwr http://crl.globalsign.com -UseBasicParsing
+iwr http://pypi.org -UseBasicParsing
 ```
 
 2.  **Confirm that certificate is installed (in all nodes)**:
