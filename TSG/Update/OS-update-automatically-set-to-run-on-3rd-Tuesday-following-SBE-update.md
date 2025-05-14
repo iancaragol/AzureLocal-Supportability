@@ -39,7 +39,7 @@ To confirm you are at risk of being impacted (on the next 3rd Tuesday) you can c
 1. The `PreUpdateScript` is from an SBE (SBECache will be in the path)
 2. The `DaysOfWeek` and `WeeksOfMonth` are setup for the 3rd Tuesday 
 
-![Cau-Scheduled-3rd-Tuesday.png](../Cau-Scheduled-3rd-Tuesday.png)
+![Cau-Scheduled-3rd-Tuesday.png](images/Cau-Scheduled-3rd-Tuesday.png)
 
 # Cause
 Prior to the 2505 release of Azure Local, the [Solution Builder Extension (SBE)](https://learn.microsoft.com/en-us/azure/azure-local/update/solution-builder-extension) automation may attempt to remove the CauPluginName property from the CauClusterRole if the SBE uses a "custom" CAU plugin using the following syntax:
@@ -85,10 +85,10 @@ else {
 ```
 
 As shown below, this script will indicate if the trigger needed to be removed:
-![Cau-Trigger-Remove.png](../Cau-Trigger-Remove.png)
+![Cau-Trigger-Remove.png](images/Cau-Trigger-Remove.png)
 
 Or it will indicate there was no cleanup needed:
-![Cau-Trigger-already-removed.png](../Cau-Trigger-already-removed.png)
+![Cau-Trigger-already-removed.png](images/Cau-Trigger-already-removed.png)
 
 ## Step 2: Install solution updates as appropriate
 If your cluster already had the scheduled updates trigger on the 3rd Tuesday, your cluster servers have a newer OS build than the Azure Local solution version expects.  It is advised to follow the normal update process to update your cluster to the same version of Azure local that corresponds to the OS build you have installed as soon as reasonably possible.  See https://learn.microsoft.com/en-us/azure/azure-local/release-information-23h2 for details on Azure Local releases to identify which solution version you will need to reach before the OS build and Azure Local version match again.
