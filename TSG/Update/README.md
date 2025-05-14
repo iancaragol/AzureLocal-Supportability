@@ -17,3 +17,4 @@
 * [Type 'UpdateArbAndExtensions' of Role 'MocArb' raised an exception: 'CredentialAdaptor' object has no attribute 'signed_session'](./Type-'UpdateArbAndExtensions'-of-Role-'MocArb'-raised-an-exception%253A-'CredentialAdaptor'-object-has-no-attribute-'signed_session'.md)
 * [Update Hangs after Secret Rotation](./Update-Hangs-after-Secret-Rotation.md)
 * [Update fails due to missing DeploymentLaunchType registry key](./Missing-DeploymentLaunchType-regkey-fails-update.md)
+* [OS update automatically set to run on 3rd Tuesday following SBE update](./OS-update-automatically-set-to-run-on-3rd-Tuesday-following-SBE-update.md)
