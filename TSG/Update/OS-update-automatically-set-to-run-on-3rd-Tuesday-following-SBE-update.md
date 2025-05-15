@@ -1,11 +1,11 @@
-**Requires action before 3rd Tuesday of month (e.g. May 20, 2025)**
+**Requires action before 3rd Tuesday of month (e.g. dates in 2025: May 20th, June 17th, July 15th)**
 
 This issue can be seen on any Azure Local build prior to 2505.
 
 Depending on the hardware vendor, the latest OS updates (the monthly recommended cumulative update) may install automatically on the 3rd Tuesday of the month if for some hardware models of servers IF the most recently installed update included a [Solution Builder Extension (SBE)](https://learn.microsoft.com/en-us/azure/azure-local/update/solution-builder-extension) update.
 
 # Symptoms
-Without the customer configuring OS updates to install, following an SBE update the a Cluster Aware Updating (CAU) run may be scheduled to install Windows Server updates on the 3rd Tuesday of the month starting at 3 am local time.
+Without the customer configuring OS updates to install, following an SBE update the a Cluster Aware Updating (CAU) run may be scheduled to install Windows Server updates on the 3rd Tuesday of the month starting around 3am local time.
 
 This can result in the OS version installed being the latest (the current month's recommended cumulative OS updates) being much newer than the installed Azure Local solution version. For example, the OS build might be a recent build such as `25398.1551` (which was supposed to be installed by the solution update for 11.2504.x), but the solution version might be much older (e.g. 10.2408.x).
 
@@ -30,9 +30,10 @@ $getCauReportBlock = {
 # type the deployment user credentials when prompted
 Invoke-Command -Credential $null -Authentication Credssp -Computername localhost -ScriptBlock $getCauReportBlock
 ```
-If that indicates there was a CAU run that used the `Microsoft.WindowsUpdate` plugin AND it started on the 3rd Tuesday, it most likely indicates the issue described in this article was the cause for the OS updates being installed automatically.
+As show in the below example, this can highlight CAU run that used the `Microsoft.WindowsUpdate` plugin AND it started on the 3rd Tuesday of a month at close to 3am in 3 cases with the one exception being 9/18 (which was a Wednesday).  Results like the following (showing this timing trend and plugin) are typical of clusters impacted by the issue outlined by this article.
+![example-of-WindowsUpdate-on-3rd-Tuesday.png](images/example-of-WindowsUpdate-on-3rd-Tuesday.png)
 
-If your cluster has already been impacted, please apply the "Step 1" mitigation to assure the automatic updates do not continue to install each month and "Step 2" mitigation to bring your cluster back into alignment between the solution version and OS version.
+If your cluster has already been impacted, please apply the "Step 1" mitigation to assure the automatic updates do not continue to install each month and "Steps 2 and 3" mitigation to bring your cluster back into alignment between the solution version and OS version.
 
 ## Confirming your cluster is at risk of having updates installed automatically
 To confirm you are at risk of being impacted (on the next 3rd Tuesday) you can check the output of `Get-CauClusterRole` to confirm 
@@ -90,7 +91,15 @@ As shown below, this script will indicate if the trigger needed to be removed:
 Or it will indicate there was no cleanup needed:
 ![Cau-Trigger-already-removed.png](images/Cau-Trigger-already-removed.png)
 
-## Step 2: Install solution updates as appropriate
+## Step 2: Synchronize OS builds across cluster (as appropriate)
+If your cluster already had the scheduled updates trigger on the 3rd Tuesday, the servers in your may have inconsistent versions of OS builds installed. For example, some servers may have latest OS build while others may have an older build.
+
+If you notice you have inconsistent versions for the OS (like shown below) you will either need to bring them back into sync or skip checks in later solution updates that will identify the versions are mismatched.  See [AzureLocal-Supportability/TSG/Update/UpdateOsBuildNumberInEce-MismatchedBuilds.md at main · Azure/AzureLocal-Supportability](https://github.com/Azure/AzureLocal-Supportability/blob/main/TSG/Update/UpdateOsBuildNumberInEce-MismatchedBuilds.md).
+![different-os-builds.png](images/different-os-builds.png)
+
+**Note:** This inconsistency can result from the automatically scheduled CAU run timing out, failing, or getting interrupted.  With such CAU runs being automatically scheduled it increases the chances of such a partial OS updates going unnoticed (because the update wasn't directly scheduled/monitored).
+
+## Step 3: Install solution updates (as appropriate)
 If your cluster already had the scheduled updates trigger on the 3rd Tuesday, your cluster servers have a newer OS build than the Azure Local solution version expects.  It is advised to follow the normal update process to update your cluster to the same version of Azure local that corresponds to the OS build you have installed as soon as reasonably possible.  See https://learn.microsoft.com/en-us/azure/azure-local/release-information-23h2 for details on Azure Local releases to identify which solution version you will need to reach before the OS build and Azure Local version match again.
 
 **Important:** Because the OS build installed is likely to include a newer version of dotnet than expected, this guide will need to be followed when installing each subsequent solution update (until you reach the solution version 10.2411.1.x or higher):
