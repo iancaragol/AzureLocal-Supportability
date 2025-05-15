@@ -7,3 +7,5 @@
 * [Unable to manage updates post 23H2 OS upgrade](./Known-issue-%252D-Unable-to-manage-updates-post-23H2-OS-upgrade.md)
 * [How to remediate an obsolete LCM Upgrade package](./How-to-remediate-an-obsolete-LCM-Upgrade-package.md)
 * [Solution upgrade failed at "SetTrustedHost" step](./Known-issue-Solution-upgrade-failed-at-SetTrustedHost-step.md)
+* ["ScopeLocked" error during ARB upgrade](./Known-issue-ScopeLockedError-ARB-Upgrade.md)
+* [Solution upgrade failed at 'CleanUpDeploymentPackageAndNugetStoreOnNonSeedNodes' step](./Known-issue-Solution-upgrade-failed-at-CleanUpDeploymentPackageAndNugetStoreOnNonSeedNodes-step.md)
