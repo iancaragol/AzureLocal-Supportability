@@ -16,7 +16,7 @@ This can result in the OS version installed being the latest (the current month'
 To confirm been impacted by the issue documented in this article, confirm have experienced OS updates triggered at 3 am on the 3rd Tuesday of a month by calling Get-CauReport as the deployment user from any cluster node:
 ```Powershell
 $getCauReportBlock = {
-    [array]$allReports = Get-CauReport -ClusterName $clusterName -Detailed
+    [array]$allReports = Get-CauReport -Detailed
     $results = @()
     foreach ($report in $allReports) {
         $summaryReport = @{}
