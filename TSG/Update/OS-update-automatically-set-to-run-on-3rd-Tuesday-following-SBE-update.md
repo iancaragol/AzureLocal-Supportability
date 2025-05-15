@@ -5,7 +5,7 @@ This issue can be seen on any Azure Local build prior to 2505.
 Depending on the hardware vendor, the latest OS updates (the monthly recommended cumulative update) may install automatically on the 3rd Tuesday of the month if for some hardware models of servers IF the most recently installed update included a [Solution Builder Extension (SBE)](https://learn.microsoft.com/en-us/azure/azure-local/update/solution-builder-extension) update.
 
 # Symptoms
-Without the customer configuring OS updates to install, following an SBE update the a Cluster Aware Updating (CAU) run may be scheduled to install Windows Server updates on the 3rd Tuesday of the month starting at 12am UTC.
+Without the customer configuring OS updates to install, following an SBE update the a Cluster Aware Updating (CAU) run may be scheduled to install Windows Server updates on the 3rd Tuesday of the month starting around 3am local time.
 
 This can result in the OS version installed being the latest (the current month's recommended cumulative OS updates) being much newer than the installed Azure Local solution version. For example, the OS build might be a recent build such as `25398.1551` (which was supposed to be installed by the solution update for 11.2504.x), but the solution version might be much older (e.g. 10.2408.x).
 
@@ -30,7 +30,7 @@ $getCauReportBlock = {
 # type the deployment user credentials when prompted
 Invoke-Command -Credential $null -Authentication Credssp -Computername localhost -ScriptBlock $getCauReportBlock
 ```
-As show in the below example, this can highlight CAU run that used the `Microsoft.WindowsUpdate` plugin AND it started on the 3rd Tuesday of a month at close to 12am UTC.  Results like the following (showing this timing trend and plugin) are typical of clusters impacted by the issue outlined by this article.
+As show in the below example, this can highlight CAU run that used the `Microsoft.WindowsUpdate` plugin AND it started on the 3rd Tuesday of a month at close to 3am in 3 cases with the one exception being 9/18 (which was a Wednesday).  Results like the following (showing this timing trend and plugin) are typical of clusters impacted by the issue outlined by this article.
 ![example-of-WindowsUpdate-on-3rd-Tuesday.png](images/example-of-WindowsUpdate-on-3rd-Tuesday.png)
 
 If your cluster has already been impacted, please apply the "Step 1" mitigation to assure the automatic updates do not continue to install each month and "Steps 2 and 3" mitigation to bring your cluster back into alignment between the solution version and OS version.
