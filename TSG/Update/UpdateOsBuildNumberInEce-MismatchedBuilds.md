@@ -65,7 +65,9 @@ To help with analysis of which option is best, the following table summarizes th
 | 10.2411.0.24 | 10.0.25398.1251 | 11B |
 | 10.2411.1.10 | 10.0.25398.1308 | 12B |
 | 10.2411.2.12 | 10.0.25398.1369 | 1B |
-
+| 10.2411.3.2 | 10.0.25398.1425 | 2B |
+| 10.2503.0.13 | 10.0.25398.1486 | 3B |
+| 11.2504.1001.19 | 10.0.25398.1551 | 4B |
 
 
 ## Option 1: Skip the failed step and resume the update.
