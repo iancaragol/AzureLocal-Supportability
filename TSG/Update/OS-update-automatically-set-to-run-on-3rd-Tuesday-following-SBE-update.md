@@ -13,7 +13,7 @@ This can result in the OS version installed being the latest (the current month'
 
 # Issue Validation
 ## Confirming unexpected updates were caused by this issue
-To confirm been impacted by the issue documented in this article, confirm have experienced OS updates triggered at 3 am on the 3rd Tuesday of a month by calling Get-CauReport as the deployment user from any cluster node:
+To confirm been impacted by the issue documented in this article, confirm have experienced OS updates triggered at 3 am (local time) on the 3rd Tuesday of a month by calling Get-CauReport as the deployment user from any cluster node:
 ```Powershell
 $getCauReportBlock = {
     [array]$allReports = Get-CauReport -Detailed
@@ -30,8 +30,10 @@ $getCauReportBlock = {
 # type the deployment user credentials when prompted
 Invoke-Command -Credential $null -Authentication Credssp -Computername localhost -ScriptBlock $getCauReportBlock
 ```
-As show in the below example, this can highlight CAU run that used the `Microsoft.WindowsUpdate` plugin AND it started on the 3rd Tuesday of a month at close to 3am in 3 cases with the one exception being 9/18 (which was a Wednesday).  Results like the following (showing this timing trend and plugin) are typical of clusters impacted by the issue outlined by this article.
+As show in the below example, this can highlight CAU run that used the `Microsoft.WindowsUpdate` plugin AND it started on the 3rd Tuesday of a month at close to 3am local time in 3 cases with the one exception being 9/18 (which was a Wednesday).  Results like the following (showing this timing trend and plugin) are typical of clusters impacted by the issue outlined by this article.
 ![example-of-WindowsUpdate-on-3rd-Tuesday.png](images/example-of-WindowsUpdate-on-3rd-Tuesday.png)
+
+Keep in mind that the above `$getCauReportBlock` will return StartTimestamp values at UTC timezone values. In the above example, the cluster was in CET timezone (which is either UTC+1 or UTC+2 depending on daylight savings) and thus the UTC based StartTimestamp values near 1am and 2am respectively represent 3am local time after accounting for timezone and daylight savings adjustments.
 
 If your cluster has already been impacted, please apply the "Step 1" mitigation to assure the automatic updates do not continue to install each month and "Steps 2 and 3" mitigation to bring your cluster back into alignment between the solution version and OS version.
 
