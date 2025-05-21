@@ -1,5 +1,5 @@
 # Symptoms
-When trying to Arc Register the new node, user sees the following error message:
+When trying to Arc Register the new node, user sees the error code 42.
 
 # Error: 
 Bootstrap reported error: A ArcAgentConnectionException error occurred with the message: 'AZCMAgent command failed with error:  >> exitcode: 42. Additional Info: See https://aka.ms/arc/azcmerror'
