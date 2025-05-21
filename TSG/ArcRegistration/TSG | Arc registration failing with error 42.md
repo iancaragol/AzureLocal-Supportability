@@ -9,13 +9,14 @@ Run this cmdlet on each node to see what powershell module versions are present
 `Get-InstalledModule Az.Accounts`
 
 If 5.0.0 version is seen, this is expected because of a breaking change -
+Changed the default output access token of 'Get-AzAccessToken' from plain text to 'SecureString'.
 
-Version    Name                                Repository           Description
--------    ----                                ----------           -----------
-5.0.0      Az.Accounts                         PSGallery            Microsoft Azure PowerShell - Accounts credential...
+| Version | Name        | Repository | Description                                         |
+|---------|-------------|------------|-----------------------------------------------------|
+| 5.0.0   | Az.Accounts | PSGallery  | Microsoft Azure PowerShell - Accounts credential...  |
+
 
 Release until 2505 expects Az.Accounts version to be 4.0.2, any higher version is not supported.
-
 If there are any versions besides expected version, they need to be removed.
 
 
