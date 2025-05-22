@@ -44,10 +44,6 @@ You must configure a static route entry for each BGP Peer IP. To do this, naviga
 BGP_Peer_IP/32 | 0.0.0.0 | 10 |
 BGP_Peer_IP_2/32 | 0.0.0.0 | 10 |
 
-
-> NOTE: There are known specific GatewayConnection extensions within Windows Admin Center in where attempting to add the Static Route Entry results in the L3 Gateway Connection losing it's properties.
-> In this scenario, you must leverage PowerShell to configure the static route entries.
-
 Alternatively, you can leverage PowerShell directly to update these properties. Below is a sample script to make this modification.
 ```powershell
 $ncRestUri = 'https://NC.FQDN' # UPDATE ME
