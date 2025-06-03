@@ -28,9 +28,9 @@ Arc Registration fails in pre-check with `ImageRecipeValidationTests`.
    ```powershell
    Get-ScheduledTask -TaskName ImageCustomizationScheduledTask
    ```
-If the state is **"Ready"**, then is the expected issue and please follow the Resolution steps.
+If the state is **"Ready"**, this matches the known issue. Please follow the resolution steps below.
 
-If the scheduled task `ImageCustomizationScheduledTask` was **already Disabled**, this is **not a known issue**. Further debugging will be required.
+If the scheduled task `ImageCustomizationScheduledTask` is already **Disabled((, this is not a known issue—further debugging will be required.
 
  ## Resolution
  
@@ -49,6 +49,6 @@ If the scheduled task `ImageCustomizationScheduledTask` was **already Disabled**
 
 ---
 
-Retry the Arc Registration Operation.
+Retry the Arc Registration operation.
 
 
