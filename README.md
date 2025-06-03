@@ -20,6 +20,7 @@ Troubleshooting guides (TSGs) are grouped by categories and stored in relevantly
 * [Azure Kubernetes](./TSG/AKS/README.md) - Deployment, Networking, Update.
 * [Storage](./TSG/Storage/README.md) - Storage.
 * [Environment Validator](./TSG/EnvironmentValidator/README.md) - Environment Validation during deploy, update, scaleout, upgrade etc.
+* [Arc Registration](./TSG/ArcRegistration/README.md) - Arc Registration.
 
 ## Bug Reports
 
