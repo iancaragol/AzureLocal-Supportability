@@ -30,7 +30,7 @@ Arc Registration fails in pre-check with `ImageRecipeValidationTests`.
    ```
 If the state is **"Ready"**, this matches the known issue. Please follow the resolution steps below.
 
-If the scheduled task `ImageCustomizationScheduledTask` is already **Disabled((, this is not a known issue—further debugging will be required.
+If the scheduled task `ImageCustomizationScheduledTask` is already **Disabled**, this is not a known issue—further debugging will be required.
 
  ## Resolution
  
