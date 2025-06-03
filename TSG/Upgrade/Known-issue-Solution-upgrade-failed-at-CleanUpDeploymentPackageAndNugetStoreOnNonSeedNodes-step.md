@@ -19,6 +19,7 @@ We have a change in LCM Extension that does not bootstrap the deployment package
 **Manually copy the file**
 
 - Manually copy the C:\Program Files\WindowsPowerShell\Modules\CloudCommon folder from seed node (first node in the cluster that has the CloudCommon folder) to all other nodes in the cluster to C:\Program Files\WindowsPowerShell\Modules\
+- Run ```Get-ChildItem -Path "C:\Program Files\WindowsPowerShell\Modules\CloudCommon" -Recurse | Unblock-File```
 
 **Resume Solution Upgrade**
 
