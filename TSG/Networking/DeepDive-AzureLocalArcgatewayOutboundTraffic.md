@@ -45,7 +45,7 @@ When using Azure Local with the Arc gateway, operating system (OS) network traff
 This structured approach simplifies network management, enhances security, and ensures compliance with organizational policies.
 
 ![Azure Local with Arc gateway outbound connectivity](./images/AzureLocalPublicPathFlowsFinal-1Node-ComponentsOnly.drawio.svg)
-![Azure Local with Arc gateway outbound connectivity](./images/AzureLocalPublicPathFlowsFinal-1Node-ComponentsOnly.drawio.svg)
+![Azure Local with Arc gateway outbound connectivity](./images/AzureLocalPublicPathFlowsFinal-1Node-ComponentsOnly.dark.svg)
 
 ## Outbound traffic types Flows
 
