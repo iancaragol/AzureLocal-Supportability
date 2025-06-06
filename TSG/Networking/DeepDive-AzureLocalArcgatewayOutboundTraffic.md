@@ -71,7 +71,7 @@ This diagram with the animated yellow arrow shows how standard HTTP (non-HTTPS) 
 - If an enterprise proxy is configured, HTTP traffic routes through this proxy.
 - If no enterprise proxy is configured, HTTP traffic is sent directly to your firewall, where your organization's security policies determine whether the traffic is allowed or blocked.
 
-This ensures standard HTTP traffic aligns with your existing security infrastructure.
+The primary reason for routing HTTP traffic through your enterprise proxy or firewall is that the Arc proxy and Arc gateway only support HTTPS traffic. Since HTTP traffic isn't supported by these components, you must explicitly define an alternative outbound path for HTTP connections. This ensures that HTTP traffic is properly managed according to your organization's existing security policies and infrastructure.
 
 ![Azure Local Node OS HTTP Traffic](./images/AzureLocalPublicPathFlowsFinal-1Node-Step2-HTTPFlows.drawio.svg)
 
