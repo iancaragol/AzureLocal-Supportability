@@ -125,6 +125,7 @@ This diagram explains HTTPS traffic handling for Azure Local virtual machines (V
 - Each Azure Local VM uses its own dedicated Arc proxy to route HTTPS traffic.
 - Allowed HTTPS traffic is securely tunneled through the Arc gateway to Azure public endpoints.
 - Non-allowed traffic is redirected to your firewall/proxy for security enforcement.
+- Azure Local VM traffic that needs to bypass Arc proxy and or customer proxy will be send directly to the internal endpoint. 
 
 This ensures Azure Local VMs have secure, controlled, and compliant outbound connectivity.
 
@@ -134,8 +135,9 @@ This ensures Azure Local VMs have secure, controlled, and compliant outbound con
 
 ## Summary of the Overall Connectivity Model
 
-- **Allowed HTTPS traffic** is securely tunneled through the Arc gateway, significantly reducing firewall rules required (fewer than 30 endpoints).
-- **Non-allowed traffic** (highlighted in pink in diagrams) is redirected to your organization's firewall/proxy for inspection and enforcement.
-- **Internal traffic** bypasses proxies entirely, ensuring efficient local communication.
-
+- **Azure Local Nodes HTTP traffic** (highlighted in yellow arrows in diagrams) is redirected to your organization's firewall/proxy for inspection and enforcement.
+- **Azure Local Nodes Allowed HTTPS traffic** (highlighted in green arrows in diagrams) is securely tunneled through the Arc gateway, significantly reducing firewall rules required (fewer than 30 endpoints).
+- **Azure Local Nodes Non-allowed HTTPS traffic** (highlighted in pink in diagrams) is redirected to your organization's firewall/proxy for inspection and enforcement.
+- **Azure Local Nodes Internal traffic** (highlighted in dark blue arrows in diagrams) bypasses proxies entirely, ensuring efficient local communication.
+- **Azure Resource Bridge VM traffic** (highlighted in light blue arrows in diagrams) is securely tunneled through the Arc gateway, significantly reducing firewall rules required (fewer than 30 endpoints).
 This structured approach simplifies network management, enhances security, and ensures compliance with organizational policies.
