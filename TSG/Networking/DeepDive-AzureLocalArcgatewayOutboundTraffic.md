@@ -16,9 +16,16 @@ This guide explains how outbound connections work with the Arc gateway and Azure
 
 The diagram below shows how your on-premises servers (Azure Local instances) connect to Azure public services using the Arc gateway. Here’s what each part means:
 
-![Azure Local with Arc gateway outbound connectivity](./images/AzureLocalPublicPathAllFlows.svg)
+## Let's start by defining the Azure Local components required to use Arc gateway
+
 ![Azure Local with Arc gateway outbound connectivity](./images/AzureLocalPublicPathFlowsFinal-1Node-ComponentsOnly.drawio.svg)
+
+## 1 - Azure Local Node Operating System traffic that we want to bypass the proxy to reach the endpoints
+
 ![Azure Local with Arc gateway outbound connectivity](./images/AzureLocalPublicPathFlowsFinal-1Node-Step1-BypassFlows.drawio.svg)
+
+## 2 - Azure Local Node Operating System traffic 
+
 ![Azure Local with Arc gateway outbound connectivity](./images/AzureLocalPublicPathFlowsFinal-1Node-Step2-HTTPSFlows.drawio.svg)
 ![Azure Local with Arc gateway outbound connectivity](./images/AzureLocalPublicPathFlowsFinal-1Node-Step3-HTTPFlows.drawio.svg)
 ![Azure Local with Arc gateway outbound connectivity](./images/AzureLocalPublicPathFlowsFinal-1Node-Step4-ARBFlows.drawio.svg)
