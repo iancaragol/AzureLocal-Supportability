@@ -60,7 +60,7 @@ This traffic is sent directly to internal endpoints without passing through your
 
 When defining your proxy bypass list during Azure Local deployment, ensure that all required subnets, domains, and individual nodes are explicitly added. For detailed guidance on building the proxy bypass list during Arc registration, refer to the following articles:
 
-![Azure Local Node OS Traffic Bypassing Proxy](./images/AzureLocalPublicPathFlowsFinal-1Node-Step1-BypassFlows.drawio.svg)
+![Azure Local Node OS Traffic Bypassing Proxy](./images/AzureLocalPublicPathFlowsFinal-1Node-Step1-BypassFlows.dark.svg)
 
 ---
 
@@ -73,7 +73,7 @@ This diagram with the animated yellow arrow shows how standard HTTP (non-HTTPS) 
 
 The primary reason for routing HTTP traffic through your enterprise proxy or firewall is that the Arc proxy and Arc gateway only support HTTPS traffic. Since HTTP traffic isn't supported by these components, you must explicitly define an alternative outbound path for HTTP connections. This ensures that HTTP traffic is properly managed according to your organization's existing security policies and infrastructure.
 
-![Azure Local Node OS HTTP Traffic](./images/AzureLocalPublicPathFlowsFinal-1Node-Step2-HTTPFlows.drawio.svg)
+![Azure Local Node OS HTTP Traffic](./images/AzureLocalPublicPathFlowsFinal-1Node-Step2-HTTPFlows.dark.svg)
 
 ---
 
@@ -86,7 +86,7 @@ This diagram explains how HTTPS traffic from Azure Local nodes is securely route
 
 This ensures secure, controlled, and compliant outbound HTTPS connectivity.
 
-![Azure Local Node OS HTTPS Traffic](./images/AzureLocalPublicPathFlowsFinal-1Node-Step3-HTTPSFlows.drawio.svg)
+![Azure Local Node OS HTTPS Traffic](./images/AzureLocalPublicPathFlowsFinal-1Node-Step3-HTTPSFlows.dark.svg)
 
 ---
 
@@ -100,7 +100,7 @@ This diagram with the animated light blue arrow illustrates HTTPS traffic handli
 
 This ensures ARB appliance VM traffic is securely managed and compliant with your organization's policies.
 
-![ARB Appliance VM HTTPS Traffic](./images/AzureLocalPublicPathFlowsFinal-1Node-Step4-ARBFlows.drawio.svg)
+![ARB Appliance VM HTTPS Traffic](./images/AzureLocalPublicPathFlowsFinal-1Node-Step4-ARBFlows.dark.svg)
 
 ---
 
@@ -114,7 +114,7 @@ This diagram shows HTTPS traffic handling for Azure Kubernetes Service (AKS) clu
 
 This ensures AKS clusters maintain secure and compliant outbound connectivity.
 
-![AKS Clusters HTTPS Traffic](./images/AzureLocalPublicPathFlowsFinal-1Node-Step5-AKSFlows.drawio.svg)
+![AKS Clusters HTTPS Traffic](./images/AzureLocalPublicPathFlowsFinal-1Node-Step5-AKSFlows.dark.svg)
 
 ---
 
@@ -129,7 +129,7 @@ This diagram explains HTTPS traffic handling for Azure Local virtual machines (V
 
 This ensures Azure Local VMs have secure, controlled, and compliant outbound connectivity.
 
-![Azure Local VMs HTTPS Traffic](./images/AzureLocalPublicPathFlowsFinal-1Node-Step6-VMFlows.drawio.svg)
+![Azure Local VMs HTTPS Traffic](./images/AzureLocalPublicPathFlowsFinal-1Node-Step6-VMFlows.dark.svg)
 
 ---
 
