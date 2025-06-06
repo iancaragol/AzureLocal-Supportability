@@ -50,7 +50,7 @@ This structured approach simplifies network management, enhances security, and e
 
 ### 1. Azure Local Node OS Traffic Bypassing the Proxy
 
-This diagram illustrates traffic from Azure Local nodes that bypasses the customer proxy and the Arc proxy entirely. Typical scenarios include:
+This diagram with the animated blue arrow illustrates traffic from Azure Local nodes that bypasses the customer proxy and the Arc proxy entirely. Typical scenarios include:
 
 - Internal communications within your local intranet.
 - Node-to-node communications within the Azure Local cluster.
@@ -66,7 +66,7 @@ When defining your proxy bypass list during Azure Local deployment, ensure that 
 
 ### 2. Azure Local Node OS HTTP Traffic via Enterprise Proxy or Firewall
 
-This diagram shows how standard HTTP (non-HTTPS) traffic from Azure Local nodes is managed:
+This diagram with the animated yellow arrow shows how standard HTTP (non-HTTPS) traffic from Azure Local nodes is managed:
 
 - If an enterprise proxy is configured, HTTP traffic routes through this proxy.
 - If no enterprise proxy is configured, HTTP traffic is sent directly to your firewall, where your organization's security policies determine whether the traffic is allowed or blocked.
