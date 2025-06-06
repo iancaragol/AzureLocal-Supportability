@@ -25,6 +25,16 @@ The following diagram introduces the core components involved in Azure Local con
 - **Firewall/Proxy:** Your organization's existing security infrastructure controlling outbound traffic.
 - **Azure Public Endpoints:** Azure services (e.g., Azure Resource Manager, Key Vault, Microsoft Graph) required by your local environment.
 
+Types of operating system (OS) network traffic based on how they should be routed when using Azure Local with the Arc gateway.
+
+The first type of traffic represented by the blue box, **"OS HTTP and HTTPS traffic that must bypass your proxy,"** refers to specific HTTP and HTTPS connections that should not pass through your organization's standard proxy infrastructure. Instead, these connections must directly reach their intended destinations, typically due to technical requirements or performance considerations.
+
+The second type of traffic represented by the yellow box, **"OS HTTP traffic that cannot use Arc proxy and must be sent to your enterprise proxy or/and firewall,"** describes HTTP traffic that is incompatible with the Arc proxy. This traffic must instead be routed through your organization's existing enterprise proxy or firewall infrastructure. This ensures compliance with internal security policies and maintains proper network management.
+
+The third type of traffic represented by the green box, **"OS HTTPS traffic that always uses Arc proxy,"** identifies HTTPS traffic that must always be routed through the Arc proxy. This ensures secure, controlled, and consistent connectivity to Azure endpoints, leveraging the Arc gateway's built-in security and management capabilities.
+
+Clearly distinguishing these traffic categories helps administrators correctly configure network routing rules, ensuring secure, efficient, and compliant connectivity between on-premises infrastructure and Azure services.
+
 ![Azure Local with Arc gateway outbound connectivity](./images/AzureLocalPublicPathFlowsFinal-1Node-ComponentsOnly.drawio.svg)
 
 ---
