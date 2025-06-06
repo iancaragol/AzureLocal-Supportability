@@ -27,7 +27,7 @@ The following diagram introduces the core components involved in Azure Local con
 
 Types of operating system (OS) network traffic based on how they should be routed when using Azure Local with the Arc gateway.
 
-The first type of traffic represented by the blue box, **"OS HTTP and HTTPS traffic that must bypass your proxy,"** refers to specific HTTP and HTTPS connections that should not pass through your organization's standard proxy infrastructure. Instead, these connections must directly reach their intended destinations, typically due to technical requirements or performance considerations.
+The first type of traffic represented by the <span style="color:blue;"><strong>the blue box, OS HTTP and HTTPS traffic that must bypass your proxy,</strong></span> refers to specific HTTP and HTTPS connections that should not pass through your organization's standard proxy infrastructure. Instead, these connections must directly reach their intended destinations, typically due to technical requirements or performance considerations.
 
 The second type of traffic represented by the yellow box, **"OS HTTP traffic that cannot use Arc proxy and must be sent to your enterprise proxy or/and firewall,"** describes HTTP traffic that is incompatible with the Arc proxy. This traffic must instead be routed through your organization's existing enterprise proxy or firewall infrastructure. This ensures compliance with internal security policies and maintains proper network management.
 
