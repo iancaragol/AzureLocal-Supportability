@@ -17,12 +17,22 @@ This guide explains how outbound connections work with the Arc gateway and Azure
 The diagram below shows how your on-premises servers (Azure Local instances) connect to Azure public services using the Arc gateway. Here’s what each part means:
 
 ![Azure Local with Arc gateway outbound connectivity](./images/AzureLocalPublicPathAllFlows.svg)
+![Azure Local with Arc gateway outbound connectivity](./images/AzureLocalPublicPathFlowsFinal-1Node-ComponentsOnly.drawio.svg)
+![Azure Local with Arc gateway outbound connectivity](./images/AzureLocalPublicPathFlowsFinal-1Node-Step1-BypassFlows.drawio.svg)
+![Azure Local with Arc gateway outbound connectivity](./images/AzureLocalPublicPathFlowsFinal-1Node-Step2-HTTPSFlows.drawio.svg)
+![Azure Local with Arc gateway outbound connectivity](./images/AzureLocalPublicPathFlowsFinal-1Node-Step3-HTTPFlows.drawio.svg)
+![Azure Local with Arc gateway outbound connectivity](./images/AzureLocalPublicPathFlowsFinal-1Node-Step4-ARBFlows.drawio.svg)
+![Azure Local with Arc gateway outbound connectivity](./images/AzureLocalPublicPathFlowsFinal-1Node-Step5-AKSFlows.drawio.svg)
+![Azure Local with Arc gateway outbound connectivity](./images/AzureLocalPublicPathFlowsFinal-1Node-Step6-VMFlows.drawio.svg)
 
 ### Components Explained
 
-- **Azure Local Instance(s):** These are your on-premises servers or clusters running Azure services locally.
-- **Management Network:** The part of your network where the Azure Local instances live. Outbound connections to Azure start from here.
-- **Arc Gateway:** This acts like a secure messenger. It collects all the traffic from your local servers and sends it safely to Azure. You only need to open outbound connections from the Arc gateway, not from every server.
+- **Azure Local Instance:** This is your Azure Local cluster.
+- **Nodes:** These are the two nodes of your Azure Local instance. Same concept applies to larger number of nodes.
+- **OS traffic proxy bypass blue box:** This box represents all the OS traffic that you don't want to send over Arc gateway. This usually applies to outbound traffic sent to your local intranet or between the Azure local nodes.
+- **OS traffic over Arc proxy blue box:** This box represents all the OS traffic that you want to send over Arc gateway. This usually applies to all outbound traffic sent to Azure or public internet.
+- **Arc proxy on Arc connected machine agent:** This box represents the Arc agent running on each node with the Arc proxy service enabled. The Arc proxy becomes the OS proxy for all HTTPS traffic that is not bypassed.
+- **Arc gateway public endpoint:** This box represents the public endpoint of your Arc gateway used to establish the HTTPS tunnel between the Arc agent running on the nodes and the Arc gateway running in Azure. You will need allow this endpoint in your firewall and/or proxy to create the tunnel.
 - **Firewall/Proxy:** Your existing security layer. All outbound traffic from the Arc gateway passes through here. You control which connections are allowed.
 - **Azure Public Endpoints:** The Azure services your local environment needs to reach (like Azure Resource Manager, Key Vault, Microsoft Graph, etc.). These are the only destinations you need to allow through your firewall or proxy.
 - **Traffic Flows:** The arrows in the diagram show how data moves: from your local servers, through the Arc gateway, out your firewall/proxy, and up to Azure.
