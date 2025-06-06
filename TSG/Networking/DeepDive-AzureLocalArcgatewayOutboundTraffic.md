@@ -45,6 +45,7 @@ When using Azure Local with the Arc gateway, operating system (OS) network traff
 This structured approach simplifies network management, enhances security, and ensures compliance with organizational policies.
 
 ![Azure Local with Arc gateway outbound connectivity](./images/AzureLocalPublicPathFlowsFinal-1Node-ComponentsOnly.drawio.svg)
+![Azure Local with Arc gateway outbound connectivity](./images/AzureLocalPublicPathFlowsFinal-1Node-ComponentsOnly.drawio.svg)
 
 ## Outbound traffic types Flows
 
@@ -135,9 +136,9 @@ This ensures Azure Local VMs have secure, controlled, and compliant outbound con
 
 ## Summary of the Overall Connectivity Model
 
-- **Azure Local Nodes HTTP traffic** (highlighted in yellow arrows in diagrams) is redirected to your organization's firewall/proxy for inspection and enforcement.
-- **Azure Local Nodes Allowed HTTPS traffic** (highlighted in green arrows in diagrams) is securely tunneled through the Arc gateway, significantly reducing firewall rules required (fewer than 30 endpoints).
+- **Azure Local Nodes HTTP traffic** 🟨 (highlighted in yellow arrows in diagrams) is redirected to your organization's firewall/proxy for inspection and enforcement.
+- **Azure Local Nodes Allowed HTTPS traffic** 🟩 (highlighted in green arrows in diagrams) is securely tunneled through the Arc gateway, significantly reducing firewall rules required (fewer than 30 endpoints).
 - **Azure Local Nodes Non-allowed HTTPS traffic** (highlighted in pink in diagrams) is redirected to your organization's firewall/proxy for inspection and enforcement.
-- **Azure Local Nodes Internal traffic** (highlighted in dark blue arrows in diagrams) bypasses proxies entirely, ensuring efficient local communication.
+- **Azure Local Nodes Internal traffic** 🟦 (highlighted in dark blue arrows in diagrams) bypasses proxies entirely, ensuring efficient local communication.
 - **Azure Resource Bridge VM traffic** (highlighted in light blue arrows in diagrams) is securely tunneled through the Arc gateway, significantly reducing firewall rules required (fewer than 30 endpoints).
 This structured approach simplifies network management, enhances security, and ensures compliance with organizational policies.
