@@ -92,10 +92,10 @@ This ensures secure, controlled, and compliant outbound HTTPS connectivity.
 
 ### 4. Azure Resource Bridge Appliance VM HTTPS Traffic via Cluster IP Proxy
 
-This diagram illustrates HTTPS traffic handling for the Azure Resource Bridge (ARB) appliance VM:
+This diagram with the animated light blue arrow illustrates HTTPS traffic handling for the Azure Resource Bridge (ARB) appliance VM:
 
-- ARB appliance VM sends HTTPS traffic through a Cluster IP proxy.
-- The Cluster IP proxy securely routes allowed traffic through the Arc gateway's HTTPS tunnel to Azure.
+- ARB appliance VM uses the Azure Local Cluster IP as proxy and sends HTTPS traffic to the Arc proxy running on the node.
+- The Arc proxy securely routes allowed traffic through the Arc gateway's HTTPS tunnel from the node to Azure.
 - Non-allowed traffic is redirected to your firewall/proxy for security enforcement.
 
 This ensures ARB appliance VM traffic is securely managed and compliant with your organization's policies.
