@@ -95,7 +95,7 @@ The two-node converged networking configuration has the following attributes:
 | Device   | Interface    |      | Device  | Interface    |
 | -------- | ------------ | ---- | ------- | ------------ |
 | **TOR1** | Ethernet1/1  | <==> | Node1   | p-NIC A      |
-| **TOR1** | Ethernet1/2  | <==> | Node2   | p-NIC B      |
+| **TOR1** | Ethernet1/2  | <==> | Node2   | p-NIC A      |
 | **TOR1** | Ethernet1/41 | <==> | TOR2    | Ethernet1/41 |
 | **TOR1** | Ethernet1/42 | <==> | TOR2    | Ethernet1/42 |
 | **TOR1** | Ethernet1/47 | <==> | Border1 | Ethernet1/x  |
@@ -108,7 +108,7 @@ The two-node converged networking configuration has the following attributes:
 
 | Device   | Interface    |      | Device  | Interface    |
 | -------- | ------------ | ---- | ------- | ------------ |
-| **TOR2** | Ethernet1/1  | <==> | Node1   | p-NIC A      |
+| **TOR2** | Ethernet1/1  | <==> | Node1   | p-NIC B      |
 | **TOR2** | Ethernet1/2  | <==> | Node2   | p-NIC B      |
 | **TOR2** | Ethernet1/41 | <==> | TOR1    | Ethernet1/41 |
 | **TOR2** | Ethernet1/42 | <==> | TOR1    | Ethernet1/42 |
