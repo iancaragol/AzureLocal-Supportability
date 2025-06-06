@@ -81,9 +81,8 @@ The primary reason for routing HTTP traffic through your enterprise proxy or fir
 
 This diagram explains how HTTPS traffic from Azure Local nodes is securely routed:
 
-- HTTPS traffic destined for allowed Azure endpoints routes through the Arc proxy running on each node.
-- The Arc proxy establishes a secure HTTPS tunnel to the Arc gateway public endpoint hosted in Azure.
-- Traffic not allowed by the Arc proxy (non-approved endpoints) is redirected to your firewall/proxy for further inspection or blocking.
+- Green arrow represent HTTPS traffic destined for allowed Azure endpoints routes through the Arc proxy via the HTTPS tunnel between Arc proxy and Arc gateway
+- Pink Arrow represents Traffic not allowed by the Arc gateway (non-approved endpoints) is redirected from Arc proxy to your firewall/proxy for further inspection or blocking. For example,Azure Local OEM endpoints for SBE uses third party endpoints not allowed by Arc gateway. This means you will need to explicity allow these third party HTTPS endpoints in your proxy and or firewall. Other example of traffic 
 
 This ensures secure, controlled, and compliant outbound HTTPS connectivity.
 
