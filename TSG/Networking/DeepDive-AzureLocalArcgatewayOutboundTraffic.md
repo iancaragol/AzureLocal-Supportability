@@ -28,6 +28,28 @@ The following diagram introduces the core components involved in Azure Local con
 ![Azure Local with Arc gateway outbound connectivity](./images/AzureLocalPublicPathFlowsFinal-1Node-ComponentsOnly.dark.svg)
 
 ---
+## Types of Network Traffic and Routing with Azure Local and Arc Gateway
+
+When using Azure Local with the Arc gateway, operating system (OS) and Arc Resource Bridge appliance VM network traffic is categorized based on how it should be routed. Clearly distinguishing these categories helps administrators correctly configure network routing rules, ensuring secure, efficient, and compliant connectivity between on-premises infrastructure and Azure services.
+
+### Traffic Categories:
+
+1. **🟦 OS HTTP and HTTPS traffic that must bypass your proxy** 
+   Specific HTTP and HTTPS connections that should not pass through your organization's standard proxy infrastructure or through Arc proxy. Instead, these connections directly reach their intended internal destinations, typically due to technical requirements or performance considerations.
+
+2. **🟨 OS HTTP traffic that cannot use Arc proxy and must be sent to your enterprise proxy or firewall**  
+   HTTP traffic incompatible with the Arc proxy. This traffic must instead be routed through your organization's existing enterprise proxy or firewall infrastructure, ensuring compliance with internal security policies.
+
+3. **🟩 OS HTTPS traffic that always uses Arc proxy**  
+   HTTPS traffic that must always be routed through the Arc proxy. This ensures secure, controlled, and consistent connectivity to Azure endpoints, leveraging the Arc gateway's built-in security and management capabilities.
+
+4. **🟥 Third-party OS HTTPS traffic not permitted through Arc gateway**
+   All HTTPS traffic from the operating system initially goes to the Arc proxy. However, the Arc gateway only permits connections to Microsoft-managed endpoints. This means that HTTPS traffic destined for third-party services—such as OEM endpoints, hardware vendor update services, or other third-party agents installed on your servers—cannot pass through the Arc gateway. Instead, this traffic is redirected to your organization's enterprise proxy or firewall. To ensure these third-party services function correctly, you must explicitly configure your firewall or proxy to allow access to these external endpoints based on your organization's requirements.
+
+5. **📘 Arc Resource Bridge VM and AKS Clusters using Azure Local Instance cluster IP as proxy**
+   Azure Arc Resource Bridge is a Kubernetes-based management solution deployed as a virtual appliance (also called the Arc appliance) on your on-premises infrastructure. Its main purpose is to enable your local resources to appear and be managed as Azure resources through Azure Resource Manager (ARM). To achieve this, the Arc Resource Bridge requires outbound connectivity to specific Azure endpoints. In an Azure Local environment, this outbound traffic is routed through the Cluster IP as proxy, which then securely forwards the traffic through the Arc gateway tunnel established by your Azure Local nodes. This approach simplifies network configuration, enhances security, and ensures compliance with your organization's network policies.
+   Also, when deploying AKS cluster in Azure Local, by default the control plane VM and the pods will also use the Cluster IP as proxy to send the outbound traffic through the Arc gateway. However, for some services running inside your AKS clusters you might also need to allow additional endpoints that will be send directly to your firewall. 
+
 
 ## Traffic Flow Scenarios
 
