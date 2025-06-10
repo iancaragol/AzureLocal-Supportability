@@ -1,4 +1,4 @@
-# Azure Local Arc Gateway Outbound Connectivity Deep Dive
+# Azure Local Public Arc Gateway Outbound Connectivity Deep Dive
 
 ## Overview
 
@@ -29,11 +29,9 @@ This structured approach simplifies network management, enhances security, and e
 
 ![Azure Local with Arc gateway outbound connectivity](./images/AzureLocalPublicPathFlowsFinal-1Node-ComponentsOnly.dark.svg)
 
-Types of operating system (OS) network traffic based on how they should be routed when using Azure Local with the Arc gateway.
+## Types of Network Traffic and Routing with Azure Local and Arc Gateway
 
-## Types of OS Network Traffic and Routing with Azure Local and Arc Gateway
-
-When using Azure Local with the Arc gateway, operating system (OS) network traffic is categorized based on how it should be routed. Clearly distinguishing these categories helps administrators correctly configure network routing rules, ensuring secure, efficient, and compliant connectivity between on-premises infrastructure and Azure services.
+When using Azure Local with the Arc gateway, operating system (OS) and Arc Resource Bridge appliance VM network traffic is categorized based on how it should be routed. Clearly distinguishing these categories helps administrators correctly configure network routing rules, ensuring secure, efficient, and compliant connectivity between on-premises infrastructure and Azure services.
 
 ### Traffic Categories:
 
@@ -57,7 +55,7 @@ When using Azure Local with the Arc gateway, operating system (OS) network traff
 
 ### 1. Azure Local Node OS Traffic Bypassing the Proxy
 
-This diagram with the animated blue arrow illustrates traffic from Azure Local nodes that bypasses the customer proxy and the Arc proxy entirely. Typical scenarios include:
+This diagram with the animated dark blue arrow 🟦 illustrates traffic from Azure Local nodes that bypasses the customer proxy and the Arc proxy entirely. Typical scenarios include:
 
 - Internal communications within your local intranet.
 - Node-to-node communications within the Azure Local cluster.
@@ -73,7 +71,7 @@ When defining your proxy bypass list during Azure Local deployment, ensure that 
 
 ### 2. Azure Local Node OS HTTP Traffic via Enterprise Proxy or Firewall
 
-This diagram with the animated yellow arrow shows how standard HTTP (non-HTTPS) traffic from Azure Local nodes is managed:
+This diagram with the animated yellow arrow 🟨 shows how standard HTTP (non-HTTPS) traffic from Azure Local nodes is managed:
 
 - If an enterprise proxy is configured, HTTP traffic routes through this proxy.
 - If no enterprise proxy is configured, HTTP traffic is sent directly to your firewall, where your organization's security policies determine whether the traffic is allowed or blocked.
@@ -88,8 +86,8 @@ The primary reason for routing HTTP traffic through your enterprise proxy or fir
 
 This diagram explains how HTTPS traffic from Azure Local nodes is securely routed:
 
-- Green arrow represent HTTPS traffic destined for allowed Azure endpoints routes through the Arc proxy via the HTTPS tunnel between Arc proxy and Arc gateway
-- Pink Arrow represents Traffic not allowed by the Arc gateway (non-approved endpoints) is redirected from Arc proxy to your firewall/proxy for further inspection or blocking. For example,Azure Local OEM endpoints for SBE uses third party endpoints not allowed by Arc gateway. This means you will need to explicity allow these third party HTTPS endpoints in your proxy and or firewall. Other example of traffic 
+- Green arrow 🟩 represent HTTPS traffic destined for allowed Azure endpoints routes through the Arc proxy via the HTTPS tunnel between Arc proxy and Arc gateway
+- Pinkish Arrow 🟥 represents Traffic not allowed by the Arc gateway (non-approved endpoints) is redirected from Arc proxy to your firewall/proxy for further inspection or blocking. For example,Azure Local OEM endpoints for SBE uses third party endpoints not allowed by Arc gateway. This means you will need to explicity allow these third party HTTPS endpoints in your proxy and or firewall. Other example of traffic 
 
 This ensures secure, controlled, and compliant outbound HTTPS connectivity.
 
@@ -99,7 +97,7 @@ This ensures secure, controlled, and compliant outbound HTTPS connectivity.
 
 ### 4. Azure Resource Bridge Appliance VM HTTPS Traffic via Cluster IP Proxy
 
-This diagram with the animated light blue arrow illustrates HTTPS traffic handling for the Azure Resource Bridge (ARB) appliance VM:
+This diagram with the animated light blue arrow 📘 illustrates HTTPS traffic handling for the Azure Resource Bridge (ARB) appliance VM:
 
 - ARB appliance VM uses the Azure Local Cluster IP as proxy and sends HTTPS traffic to the Arc proxy running on the node.
 - The Arc proxy securely routes allowed traffic through the Arc gateway's HTTPS tunnel from the node to Azure.
@@ -113,11 +111,12 @@ This ensures ARB appliance VM traffic is securely managed and compliant with you
 
 ### 5. AKS Clusters HTTPS Traffic via Cluster IP Proxy
 
-This diagram shows HTTPS traffic handling for Azure Kubernetes Service (AKS) clusters within Azure Local:
+This diagram with the animated light blue arrow 📘 shows HTTPS traffic handling for Azure Kubernetes Service (AKS) clusters within Azure Local:
 
 - AKS clusters route HTTPS traffic through the Cluster IP proxy.
 - The Cluster IP proxy securely forwards allowed traffic through the Arc gateway's HTTPS tunnel to Azure endpoints.
 - Traffic not permitted by the Arc gateway is sent to your firewall/proxy for further security checks.
+- Some AKS services might not be configured to use the Cluster IP as proxy and might require to be allowed in your enterprise firewall. This is represented by the pinkish arrow from AKS Cluster.
 
 This ensures AKS clusters maintain secure and compliant outbound connectivity.
 
@@ -130,9 +129,9 @@ This ensures AKS clusters maintain secure and compliant outbound connectivity.
 This diagram explains HTTPS traffic handling for Azure Local virtual machines (VMs):
 
 - Each Azure Local VM uses its own dedicated Arc proxy to route HTTPS traffic.
-- Allowed HTTPS traffic is securely tunneled through the Arc gateway to Azure public endpoints.
-- Non-allowed traffic is redirected to your firewall/proxy for security enforcement.
-- Azure Local VM traffic that needs to bypass Arc proxy and or customer proxy will be send directly to the internal endpoint. 
+- Arc gateway allowed green arrow 🟩 HTTPS traffic is securely tunneled through the Arc gateway to Azure public endpoints.
+- Non-allowed Arc gateway pinkish arrow 🟥 traffic is redirected to your firewall/proxy for security enforcement.
+- Azure Local VM dark blue arrow 🟦 traffic that needs to bypass Arc proxy and customer proxy will be send directly to the internal endpoint.
 
 This ensures Azure Local VMs have secure, controlled, and compliant outbound connectivity.
 
