@@ -25,6 +25,10 @@ The following diagram introduces the core components involved in Azure Local con
 - **Firewall/Proxy:** Your organization's existing security infrastructure controlling outbound traffic.
 - **Azure Public Endpoints:** Azure services (e.g., Azure Resource Manager, Key Vault, Microsoft Graph) required by your local environment.
 
+This structured approach simplifies network management, enhances security, and ensures compliance with organizational policies.
+
+![Azure Local with Arc gateway outbound connectivity](./images/AzureLocalPublicPathFlowsFinal-1Node-ComponentsOnly.dark.svg)
+
 Types of operating system (OS) network traffic based on how they should be routed when using Azure Local with the Arc gateway.
 
 ## Types of OS Network Traffic and Routing with Azure Local and Arc Gateway
@@ -48,10 +52,6 @@ When using Azure Local with the Arc gateway, operating system (OS) network traff
 5. **📘 Arc Resource Bridge VM and AKS Clusters using Azure Local Instance cluster IP as proxy**
    Azure Arc Resource Bridge is a Kubernetes-based management solution deployed as a virtual appliance (also called the Arc appliance) on your on-premises infrastructure. Its main purpose is to enable your local resources to appear and be managed as Azure resources through Azure Resource Manager (ARM). To achieve this, the Arc Resource Bridge requires outbound connectivity to specific Azure endpoints. In an Azure Local environment, this outbound traffic is routed through the Cluster IP as proxy, which then securely forwards the traffic through the Arc gateway tunnel established by your Azure Local nodes. This approach simplifies network configuration, enhances security, and ensures compliance with your organization's network policies.
    Also, when deploying AKS cluster in Azure Local, by default the control plane VM and the pods will also use the Cluster IP as proxy to send the outbound traffic through the Arc gateway. However, for some services running inside your AKS clusters you might also need to allow additional endpoints that will be send directly to your firewall. 
-
-This structured approach simplifies network management, enhances security, and ensures compliance with organizational policies.
-
-![Azure Local with Arc gateway outbound connectivity](./images/AzureLocalPublicPathFlowsFinal-1Node-ComponentsOnly.dark.svg)
 
 ## Outbound traffic types Flows
 
