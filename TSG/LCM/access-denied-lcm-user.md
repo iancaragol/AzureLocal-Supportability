@@ -23,6 +23,7 @@ update package download failure with details similar to "Action plan GetCauDevic
 2. The LCM user does not have sufficient permissions on the Organization Unit (OU) in Active Directory (AD).
 3. The NTLM policy, configured via Group Policy, may be blocking remote operations such as Invoke-Command. This can occur if NTLM is restricted either at the OU level or on the individual nodes or the domain controller via applied Group Policy Objects (GPOs).
 4. The WinRM trusted hosts configuration is set up incorrectly.
+5. The LCM user is part of the "Protected Users" group.
 
 # Issue Validation
 
@@ -90,7 +91,7 @@ try {
 ### Step 1.1: Verify the LCM user is not part of the "Protected Users" group
 From the DC, run the following:
 ```Powershell
-Get-ADUser -Identity <LCMUser> -Properties MemberOf | Select-Object -ExpandProperty DistinguishedName # Use LCM username without domain prefix
+Get-ADUser -Identity <LCMUser> -Properties MemberOf | Select-Object -ExpandProperty MemberOf # Use LCM username without domain prefix
 ```
 If the output has something similar to `CN="...protectedusers..."` the LCM user is part of the "Protected Users" group and the LCM user must be removed from the "Protected Users" group.
 
