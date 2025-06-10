@@ -87,6 +87,13 @@ try {
 }
 ```
 
+### Step 1.1: Verify the LCM user is not part of the "Protected Users" group
+From the DC, run the following:
+```Powershell
+Get-ADUser -Identity <LCMUser> -Properties MemberOf | Select-Object -ExpandProperty DistinguishedName # Use LCM username without domain prefix
+```
+If the output has something similar to `CN="...protectedusers..."` the LCM user is part of the "Protected Users" group and the LCM user must be removed from the "Protected Users" group.
+
 ### Step 2: Check the LCM user credentials work on all nodes
 Verify the LCM user credentials work with all iterations of Invoke-Command with and without CredSSP and using the hostname or the IP as the target:
 
