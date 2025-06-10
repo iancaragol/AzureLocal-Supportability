@@ -33,20 +33,20 @@ When using Azure Local with the Arc gateway, operating system (OS) network traff
 
 ### Traffic Categories:
 
-1. **🟦 OS HTTP and HTTPS traffic that must bypass your proxy** 
+1. **🟦 🔵  OS HTTP and HTTPS traffic that must bypass your proxy** 
    Specific HTTP and HTTPS connections that should not pass through your organization's standard proxy infrastructure or through Arc proxy. Instead, these connections directly reach their intended internal destinations, typically due to technical requirements or performance considerations.
 
-2. **🟨 OS HTTP traffic that cannot use Arc proxy and must be sent to your enterprise proxy or firewall**  
+2. **🟨 🟡 OS HTTP traffic that cannot use Arc proxy and must be sent to your enterprise proxy or firewall**  
    HTTP traffic incompatible with the Arc proxy. This traffic must instead be routed through your organization's existing enterprise proxy or firewall infrastructure, ensuring compliance with internal security policies.
 
-3. **🟩 OS HTTPS traffic that always uses Arc proxy**  
+3. **🟩 🟢 OS HTTPS traffic that always uses Arc proxy**  
    HTTPS traffic that must always be routed through the Arc proxy. This ensures secure, controlled, and consistent connectivity to Azure endpoints, leveraging the Arc gateway's built-in security and management capabilities.
 
-4. **🟥 Third-party OS HTTPS traffic not permitted through Arc gateway**
+4. **🟥 🔴 Third-party OS HTTPS traffic not permitted through Arc gateway**
 
 All HTTPS traffic from the operating system initially goes to the Arc proxy. However, the Arc gateway only permits connections to Microsoft-managed endpoints. This means that HTTPS traffic destined for third-party services—such as OEM endpoints, hardware vendor update services, or other third-party agents installed on your servers—cannot pass through the Arc gateway. Instead, this traffic is redirected to your organization's enterprise proxy or firewall. To ensure these third-party services function correctly, you must explicitly configure your firewall or proxy to allow access to these external endpoints based on your organization's requirements.
 
-5. **:blue sauere: Arc Resource Bridge VM and AKS Clusters using Azure Local Instance cluster IP as proxy**
+5. **🔵 Arc Resource Bridge VM and AKS Clusters using Azure Local Instance cluster IP as proxy**
 
 This structured approach simplifies network management, enhances security, and ensures compliance with organizational policies.
 
