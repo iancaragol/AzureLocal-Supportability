@@ -45,12 +45,13 @@ When using Azure Local with the Arc gateway, operating system (OS) network traff
 4. **🟥 Third-party OS HTTPS traffic not permitted through Arc gateway**
 
 All HTTPS traffic from the operating system initially goes to the Arc proxy. However, the Arc gateway only permits connections to Microsoft-managed endpoints. This means that HTTPS traffic destined for third-party services—such as OEM endpoints, hardware vendor update services, or other third-party agents installed on your servers—cannot pass through the Arc gateway. Instead, this traffic is redirected to your organization's enterprise proxy or firewall. To ensure these third-party services function correctly, you must explicitly configure your firewall or proxy to allow access to these external endpoints based on your organization's requirements.
-
-#80FF00
-#FF0080
-#00FFFF
-#FFD966
-#0066CC
+⤴️
+📘
+#80FF00[text]
+#FF0080[text]
+#00FFFF[text]
+#FFD966[text]
+#0066CC[text]
 
 1. $${\color{lightblue}**Arc Resource Bridge VM and AKS Clusters using Azure Local Instance cluster IP as proxy**</code>
 
