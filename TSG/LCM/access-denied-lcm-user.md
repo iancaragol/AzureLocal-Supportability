@@ -23,6 +23,7 @@ update package download failure with details similar to "Action plan GetCauDevic
 2. The LCM user does not have sufficient permissions on the Organization Unit (OU) in Active Directory (AD).
 3. The NTLM policy, configured via Group Policy, may be blocking remote operations such as Invoke-Command. This can occur if NTLM is restricted either at the OU level or on the individual nodes or the domain controller via applied Group Policy Objects (GPOs).
 4. The WinRM trusted hosts configuration is set up incorrectly.
+5. The LCM user is part of the "Protected Users" group (See Protected Users heading below).
 
 # Issue Validation
 
@@ -86,13 +87,6 @@ try {
     Write-Error "Failed to add $lcmUser to the Administrators group. Error: $_"
 }
 ```
-
-### Step 1.1: Verify the LCM user is not part of the "Protected Users" group
-From the DC, run the following:
-```Powershell
-Get-ADUser -Identity <LCMUser> -Properties MemberOf | Select-Object -ExpandProperty DistinguishedName # Use LCM username without domain prefix
-```
-If the output has something similar to `CN="...protectedusers..."` the LCM user is part of the "Protected Users" group and the LCM user must be removed from the "Protected Users" group.
 
 ### Step 2: Check the LCM user credentials work on all nodes
 Verify the LCM user credentials work with all iterations of Invoke-Command with and without CredSSP and using the hostname or the IP as the target:
@@ -391,3 +385,42 @@ Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDel
 
 ### Check NTLM is not Blocked by GPO
 Verify that you do not have policies in your domain controller that are restricting NTLM access. Please review [Network security: Restrict NTLM: NTLM authentication in this domain](https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/security-policy-settings/network-security-restrict-ntlm-ntlm-authentication-in-this-domain).
+
+## Access Denied because LCM is part of "Protected User" Group
+### Symptoms
+Deployment fails with `access denied` when doing invoke-command or new-pssession from node1 -> node1
+
+The following variations of invoke-command or new-pssession from node1 -> node1 fail
+- new-pssession \<node1 hostname\>
+- new-pssession localhost
+- new-pssession \<loopback IP\>
+
+The following variations of invoke-command or new-pssession succeed
+- new-pssession \<node1 hostname\> -EnableNetworkAccess
+- new-pssession \<node1 hostname.fqdn>
+- new-pssession \<node2 hostname\>
+
+### Issue Validation
+#### Validation Step 1
+Repro the issue by running the following from node1:
+```Powershell
+new-pssession <node1 hostname>
+$event = Get-WinEvent -LogName Security -FilterXPath "*[System[(EventID=4625)]]" | Select-Object -First 1
+$event.message
+```
+If you see the following error code in the message, this is an indication of the problem
+```
+Failure Information:
+
+              Failure Reason:                  Unknown user name or bad password.
+              Status:                          0xC000006E
+              Sub Status:                      0xC000006E
+```
+#### Validation Step 2
+From the DC, run the following:
+```Powershell
+Get-ADUser -Identity <LCMUser> -Properties MemberOf | Select-Object -ExpandProperty MemberOf # Use LCM username without domain prefix
+```
+If the output has something similar to `CN="...protectedusers..."` the LCM user is part of the "Protected Users" group. If both validations passed, follow the mitigation below.
+### Mitigation
+The LCM user must be removed from the "Protected Users" group.
