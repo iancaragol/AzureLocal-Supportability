@@ -388,16 +388,11 @@ Verify that you do not have policies in your domain controller that are restrict
 
 ## Access Denied because LCM is part of "Protected User" Group
 ### Symptoms
-Deployment fails with:
-```
-Type 'RegisterStamptoAzure' of Role 'ArcIntegration' raised an exception:
-
-HCI Registration failed. Error: Cannot bind argument to parameter 'Path' because it is null.
-```
-or failures with `access denied` when doing invoke-command or new-pssession from node1 -> node1
+Deployment fails with `access denied` when doing invoke-command or new-pssession from node1 -> node1
 
 The following variations of invoke-command or new-pssession from node1 -> node1 fail
 - new-pssession \<node1 hostname\>
+- new-pssession localhost
 - new-pssession \<loopback IP\>
 
 The following variations of invoke-command or new-pssession succeed
