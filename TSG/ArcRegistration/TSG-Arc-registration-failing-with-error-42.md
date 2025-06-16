@@ -5,7 +5,7 @@ When trying to Arc Register the new node, user sees the error code 42.
 Bootstrap reported error: A ArcAgentConnectionException error occurred with the message: 'AZCMAgent command failed with error:  >> exitcode: 42. Additional Info: See https://aka.ms/arc/azcmerror'
 
 # Potential causes
-1. Az.Accounts version on the systsem is incorrect.
+1. Az.Accounts version on the system is incorrect.
 2. ARM access token is expired.
 3. ARM access token is passed incorrectly.
 
