@@ -59,7 +59,7 @@ If there are any versions besides expected version, they need to be removed.
 
   ## Issue validation
 
-  On an average, ARM access tokens are valid for 75 minutes (https://learn.microsoft.com/en-us/entra/identity-platform/access-tokens#token-lifetime). If the token was created more than 1h before using it for registration, this could be a likely cause for the error.
+  If the token was created more than 1h before using it for registration, this could be a likely cause for the error.
 
   ## Resolution
   
@@ -68,9 +68,6 @@ If there are any versions besides expected version, they need to be removed.
   **Creating an ARM Access Token**
     
     $token = (Get-AzAccessToken).token
-
-  ## Related ICMs
-  1. https://portal.microsofticm.com/imp/v5/incidents/details/639152842/summary
 
 # 3. ARM access token is passed incorrectly
 
@@ -82,7 +79,4 @@ If there are any versions besides expected version, they need to be removed.
   Pass only the 'token' property of the ARM access token object
       
     $token = (Get-AzAccessToken).token
-
-  ## Related ICMs
-  1. https://portal.microsofticm.com/imp/v5/incidents/details/639152842/summary
     
