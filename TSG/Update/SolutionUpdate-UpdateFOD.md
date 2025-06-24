@@ -28,4 +28,6 @@ if (!(Test-Path -Path $ComposedImageRegistryKeyPath)) {
 Set-ItemProperty -Path $ComposedImageRegistryKeyPath -Name $ComposedBuildIdKey -Value $ComposedBuildIdValue
 Write-Host "Set registry with value $($ComposedBuildIdValue)"
 
+
+```
 3. Retry the Solution Update.
