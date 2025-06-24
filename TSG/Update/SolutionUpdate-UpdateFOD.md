@@ -23,11 +23,10 @@ $ComposedBuildIdValue = "11.2504.0.3141"
 if (!(Test-Path -Path $ComposedImageRegistryKeyPath))
 {
     Write-Host "Creating registry key $($RegKeyPath) with key $($ComposedBuildIdKey)";
-New-Item -Path $ComposedImageRegistryKeyPath -Force | Out-Null;
-New-ItemProperty -Path $ComposedImageRegistryKeyPath -Name $ComposedBuildIdKey -PropertyType String -Force | Out-Null;
-Set-ItemProperty -Path $ComposedImageRegistryKeyPath -Name $ComposedBuildIdKey -Value $ComposedBuildIdValue
-Write-Host "Set registry with value $($ComposedBuildIdValue)"
-
+    New-Item -Path $ComposedImageRegistryKeyPath -Force | Out-Null;
+    New-ItemProperty -Path $ComposedImageRegistryKeyPath -Name $ComposedBuildIdKey -PropertyType String -Force | Out-Null;
+    Set-ItemProperty -Path $ComposedImageRegistryKeyPath -Name $ComposedBuildIdKey -Value $ComposedBuildIdValue
+    Write-Host "Set registry with value $($ComposedBuildIdValue)"
 }
 
 ```
