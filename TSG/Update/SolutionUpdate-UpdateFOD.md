@@ -30,8 +30,5 @@ Write-Host "Set registry with value $($ComposedBuildIdValue)"
 
 }
 
-
-
-
 ```
 3. Retry the Solution Update.
