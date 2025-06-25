@@ -1,5 +1,5 @@
 ## Symptoms
-Solution Update failing after Brownfield action plan.
+Solution Update failing after Solution Upgrade action plan.
 
 ## Root Cause
 
