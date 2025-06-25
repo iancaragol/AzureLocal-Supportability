@@ -3,7 +3,7 @@ Solution Update failing after Solution Upgrade action plan.
 
 ## Root Cause
 
-This error indicates that the **UpdateFOD** interface in the **ComposedImageUpdate** role failed as Composed Image is not used for Brownfield.
+This error indicates that the **UpdateFOD** interface in the **ComposedImageUpdate** role failed as Composed Image is not used for OS Upgrade.
 
 ## Mitigation Steps
 
