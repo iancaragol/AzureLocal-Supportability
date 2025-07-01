@@ -21,6 +21,10 @@ This occurs because there is an underlying issue with removing certain folders. 
 For customers updating their Azure Local instance to 2505 release, if you encounter any of the above errors, perform the following steps to resolve the issue:
 
 1. [Required] Restart Azure Local instance (all the machines in your Azure Local instance).
-2. [Required] Resume Azure Local update (repeat steps to update your Azure Local instance).
+2.1 Log in into one of the nodes instances and open a Powershell admin console.
+2.2 Create an ECE Cluster service by running: ```$ececlient = Create-EceClusterServiceClient```
+2.3 Run update action plan for IGVM Agent by running: ```$guid = Invoke-ActionPlanInstance -RolePath IgvmAgentDeployment  -ActionType DeployIgvmAgent -EceClient:$ececlient```
+2.4 Monitor the action plan until it succeeds by running: ```Start-MonitoringActionplanInstanceToComplete $guid```
+3. [Required] Resume Azure Local update (repeat steps to update your Azure Local instance).
 
 Alternately, you can skip 2505 and directly update your Azure Local instance to 2506 release or above to resolve the issue.
