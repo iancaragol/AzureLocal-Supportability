@@ -24,7 +24,7 @@ For customers updating their Azure Local instance to 2505 release, if you encoun
 2. [Optional] Run IGVM Agent update plan.
    - Log in into one of the nodes instances and open a Powershell admin console.
    - Create an ECE Cluster service by running: ```$ececlient = Create-EceClusterServiceClient```
-   - Run update action plan for IGVM Agent by running: ```$guid = Invoke-ActionPlanInstance -RolePath IgvmAgentDeployment  -ActionType DeployIgvmAgent -EceClient:$ececlient```
+   - Run update action plan for IGVM Agent by running: ```$guid = Invoke-ActionPlanInstance -RolePath IgvmAgentDeployment -ActionType DeployIgvmAgent -EceClient:$ececlient```
    - Monitor the action plan until it succeeds by running: ```Start-MonitoringActionplanInstanceToComplete $guid```
 3. [Required] Resume Azure Local update (repeat steps to update your Azure Local instance).
 
