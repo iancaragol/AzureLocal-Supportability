@@ -22,10 +22,10 @@ For customers updating their Azure Local instance to 2505 release, if you encoun
 
 1. [Required] Restart Azure Local instance (all the machines in your Azure Local instance).
 2. [Optional] Run IGVM Agent update plan.
-2.1 Log in into one of the nodes instances and open a Powershell admin console.
-2.2 Create an ECE Cluster service by running: ```$ececlient = Create-EceClusterServiceClient```
-2.3 Run update action plan for IGVM Agent by running: ```$guid = Invoke-ActionPlanInstance -RolePath IgvmAgentDeployment  -ActionType DeployIgvmAgent -EceClient:$ececlient```
-2.4 Monitor the action plan until it succeeds by running: ```Start-MonitoringActionplanInstanceToComplete $guid```
+   - Log in into one of the nodes instances and open a Powershell admin console.
+   - Create an ECE Cluster service by running: ```$ececlient = Create-EceClusterServiceClient```
+   - Run update action plan for IGVM Agent by running: ```$guid = Invoke-ActionPlanInstance -RolePath IgvmAgentDeployment  -ActionType DeployIgvmAgent -EceClient:$ececlient```
+   - Monitor the action plan until it succeeds by running: ```Start-MonitoringActionplanInstanceToComplete $guid```
 3. [Required] Resume Azure Local update (repeat steps to update your Azure Local instance).
 
 Alternately, you can skip 2505 and directly update your Azure Local instance to 2506 release or above to resolve the issue.
