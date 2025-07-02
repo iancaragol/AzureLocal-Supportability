@@ -169,7 +169,7 @@ We have asked customers to disable GP Inheritance on the OU so that Domain Group
 
 To check Local Group Policy on the cluster node, run **"gpedit.msc /gpcomputer: $nodeName"** on the jumpbox using a credential that has access to the node. If there is a group policy configured for these settings it will be in Computer Configuration -> Administrative Templates -> System -> Credentials Delegation
 
-![items.png](items.png)
+![items.png](Items.png)
 
 To reset Local Group Policy, there are 2 options:
 1. Keep the setting as "Enabled" and update the value to the correct one based on the mitigation script. Run **"gpupdate.exe"** to make it take effect.
