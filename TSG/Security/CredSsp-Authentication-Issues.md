@@ -15,7 +15,7 @@ Message 4
 
 
 ## Cause
-The credssp is set by the Orchestrator, but this might be changed by customers manually ([Incident-579970518 Details - IcM](https://portal.microsofticm.com/imp/v5/incidents/details/579970518/summary)) or through GPO ([Incident-582965685 Details - IcM](https://portal.microsofticm.com/imp/v5/incidents/details/582965685/summary)). Refer to the Section "Group Policy" below for more details.
+The credssp is set by the Orchestrator, but this might be changed by customers manually or through GPO. Refer to the Section "Group Policy" below for more details.
 
 ## Issue Validation
 Run the command below to see if it gives the error of Message 1 in Symptoms:
