@@ -17,6 +17,7 @@ The `SBE-CAU-RUNNING-AFTER-DONE` exception can be reported for different reasons
 1. The error is seen on a single-node cluster
 2. Immediately after the error is reported by the SBE update, `Get-CauRun` continues to report an in progress CAU run.
 3. After the CAU run completes, the `Get-CauReport -Last -Detailed` output indicates a `TimingBreakdowUTC` entry where the exception was reported shortly after a RebootEnd time:
+![cau-timing-breakdown.png](./images/cau-timing-breakdown.png)
 
 # Cause
 The SBE Update action plan logic that monitors the CAU run can be interrupted on single-node clusters as part of CAU restarting the server.  This has been seen to occur 10-15% of the time on single-node clusters and is caused by Get-CauReport returning the `Unable to receive cluster object notifications: (Win32Exception) The cluster node is shutting down` for long enough prior to the node shutting down that the action plan orchestration notices that exception. If the action plan repeatedly sees this exception reported it maybe believe the CAU run has failed and record that information prior to the shutdown. Normally, the action plan monitoring of the CAU run would resume after the restart; however, if the action plan has already recorded a CAU run failure, it will be surprised to find that it is indeed still running after the node restarts.
