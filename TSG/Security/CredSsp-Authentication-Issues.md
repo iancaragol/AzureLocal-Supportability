@@ -18,7 +18,7 @@ Message 4
 The credssp is set by the Orchestrator, but this might be changed by customers manually or through GPO. Refer to the Section "Group Policy" below for more details.
 
 ## Issue Validation
-Run the command below to see if it gives the error of Message 1 in Symptoms:
+Run the command below **on the Cluster Nodes** to see if it gives the error of Message 1 in Symptoms:
 ```powershell
 Invoke-Command -ComputerName $remoteNodeName -Credential $deploymentUserCred -Authentication Credssp -ScriptBlock {whoami}
 ```
@@ -26,7 +26,7 @@ If it throws Message 1, it means AllowFreshCredentials is not configured correct
 If it is Message 3, it means CredSSP is not enabled in the Service configuration.
 If it is Message 4, it means CredSSP is not enabled in the Client configuration.
 
-Run the command below to see if it gives the error of Message 2 in Symptoms:
+Run the command below **on the Cluster Nodes** to see if it gives the error of Message 2 in Symptoms:
 ```powershell
 Invoke-Command -ComputerName $remoteNodeIP -Credential $deploymentUserCred -Authentication Credssp -ScriptBlock {whoami}
 ```
@@ -34,7 +34,7 @@ Invoke-Command -ComputerName $remoteNodeIP -Credential $deploymentUserCred -Auth
 If it throws Message 2, it means AllowFreshCredentialsWhenNTLMOnly is not configured correctly.
 
 ## Mitigation
-Run the script below to validate the Credssp Settings:
+Run the script below **on the Cluster Nodes** to validate the Credssp Settings:
 ```powershell
 function Test-LocalCredsspSetting
 {
@@ -123,7 +123,7 @@ if ($r)
 }
 ```
 
-Run the script below to reset the registry keys for Credssp:
+Run the script below **on the Cluster Nodes** to reset the registry keys for Credssp:
 ```powershell
 # Enable CredSSP in the Service configuration
 Set-Item 'wsman:\localhost\Service\Auth\CredSSP' $true -Force
