@@ -17,8 +17,9 @@ In addition, if you examine the VFP rules for a VM that is impacted, you will on
 
 To confirm which rules are programmed, perform the following steps using cmdlets available in [SdnDiagnostics PowerShell Module]().
 1. RDP into the Hyper-V host where the VM you are troubleshooting is located.
-2. Determine the port profile for the VM Network Adapter: `Get-SdnVMNetworkAdapterPortProfile -VMName 'Contoso-VM1'`
-3. Examine the current VFP policies: `Show-SdnVfpPortConfig -PortName <PortName_From_Previous_Command> -Type IPv4 -Direction OUT`
+1. Determine the port profile for the VM Network Adapter: `Get-SdnVMNetworkAdapterPortProfile -VMName 'Contoso-VM1'`
+1. Examine the current VFP policies: `Show-SdnVfpPortConfig -PortName <PortName_From_Previous_Command> -Type IPv4 -Direction OUT`
+    - Alternatively, you can leverage `Get-SdnVfpPortRule -PortName <PortName_From_Previous_Command> -Layer "SLB_NAT_LAYER" -Group "SLB_GROUP_NAT_IPv4_OUT"`
 
 # Cause
 In this situation, you may not have the proper protocols defined for the outbound NAT rule. If you have a rule configured for TCP, any UDP related traffic will not be NATed properly, resulting in packet being dropped. 
