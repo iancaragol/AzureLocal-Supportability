@@ -8,4 +8,5 @@
 ## Reference Architecture
 
 * [Two machines switchless dual link network architecture](./2-node-converged-networking.md)
+* [Azure Local QOS policy Reference](./qos.md)
 * [Disaggregated Switched Storage Design](./Disaggregated_Switched_Storage.md)

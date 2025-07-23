@@ -23,6 +23,7 @@ update package download failure with details similar to "Action plan GetCauDevic
 2. The LCM user does not have sufficient permissions on the Organization Unit (OU) in Active Directory (AD).
 3. The NTLM policy, configured via Group Policy, may be blocking remote operations such as Invoke-Command. This can occur if NTLM is restricted either at the OU level or on the individual nodes or the domain controller via applied Group Policy Objects (GPOs).
 4. The WinRM trusted hosts configuration is set up incorrectly.
+5. The LCM user is part of the "Protected Users" group (See Protected Users heading below).
 
 # Issue Validation
 
@@ -105,8 +106,8 @@ Invoke-Command -ComputerName $targetIp -Credential $credential -Authentication C
 
 If there are no issues running the previous script, then proceed to **Step 3**, otherwise:
 
-1. If no Invoke-Command works (with or without CredSSP), double check you have entered the right LCM user credentials. If you are certain they are correct, then check the [WinRM Trusted Hosts configuration](#winrm-trusted-hosts-configuration) is set up properly to include all hostnames and IPs of all nodes in your cluster.
-2. If Invoke-Command without CredSSP works, but CredSSP does not work, try [resetting the CredSSP registry keys](#reset-credssp-registry-keys).
+1. If no Invoke-Command works (with or without CredSSP), double check you have entered the right LCM user credentials. If you are certain they are correct, then check the [WinRM Trusted Hosts configuration](#winrm-trusted-hosts-configuration) is set up properly to include all hostnames, FQDNs and IPs of all nodes in your cluster.
+2. If Invoke-Command without CredSSP works, but CredSSP does not work, please review the [CredSsp-Authentication-Issues Doc](../Security/CredSsp-Authentication-Issues.md).
 3. If Invoke-Command with hostname works, but using the IP does not work, ensure the [WinRM Trusted Hosts configuration](#winrm-trusted-hosts-configuration) is set up properly to include all IPs of all nodes in your cluster and that a Group Policy Object (GPO) [is not blocking NTLM](#check-ntlm-is-not-blocked-by-gpo).
  
 ### Step 3: Verify the LCM credential in AD matches ECE Store
@@ -366,21 +367,44 @@ $DAdmin = $securityInfo.DomainUsers.User | Where Role -eq "DomainAdmin"
 Write-Output "Your LCM username is: $($DAdmin.Credential.Credential.UserName)"
 ```
 
-### Reset CredSSP Registry Keys
-```Powershell
-# Set properties of CredentialsDelegation key
-Set-ItemProperty -Path HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation -Name AllowFreshCredentials -Value 1 -Type DWORD -Force
-Set-ItemProperty -Path HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation -Name AllowFreshCredentialsWhenNTLMOnly -Value 1 -Type DWORD -Force
-Set-ItemProperty -Path HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation -Name ConcatenateDefaults_AllowFresh -Value 1 -Type DWORD -Force
-Set-ItemProperty -Path HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation -Name ConcatenateDefaults_AllowFreshNTLMOnly -Value 1 -Type DWORD -Force
-
-# Create CredentialsDelegation sub-keys, if needed
-New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation\AllowFreshCredentials" -ItemType Directory -Force
-New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation\AllowFreshCredentialsWhenNTLMOnly" -ItemType Directory -Force
-# Set properties of CredentialsDelegation sub-keys
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation\AllowFreshCredentials" -Name "1" -Value "wsman/*" -Type String -Force
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation\AllowFreshCredentialsWhenNTLMOnly" -Name "1" -Value "wsman/*" -Type String -Force
-```
-
 ### Check NTLM is not Blocked by GPO
 Verify that you do not have policies in your domain controller that are restricting NTLM access. Please review [Network security: Restrict NTLM: NTLM authentication in this domain](https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/security-policy-settings/network-security-restrict-ntlm-ntlm-authentication-in-this-domain).
+
+## Access Denied because LCM is part of "Protected User" Group
+### Symptoms
+Deployment fails with `access denied` when doing invoke-command or new-pssession from node1 -> node1
+
+The following variations of invoke-command or new-pssession from node1 -> node1 fail
+- new-pssession \<node1 hostname\>
+- new-pssession localhost
+- new-pssession \<loopback IP\>
+
+The following variations of invoke-command or new-pssession succeed
+- new-pssession \<node1 hostname\> -EnableNetworkAccess
+- new-pssession \<node1 hostname.fqdn>
+- new-pssession \<node2 hostname\>
+
+### Issue Validation
+#### Validation Step 1
+Repro the issue by running the following from node1:
+```Powershell
+new-pssession <node1 hostname>
+$event = Get-WinEvent -LogName Security -FilterXPath "*[System[(EventID=4625)]]" | Select-Object -First 1
+$event.message
+```
+If you see the following error code in the message, this is an indication of the problem
+```
+Failure Information:
+
+              Failure Reason:                  Unknown user name or bad password.
+              Status:                          0xC000006E
+              Sub Status:                      0xC000006E
+```
+#### Validation Step 2
+From the DC, run the following:
+```Powershell
+Get-ADUser -Identity <LCMUser> -Properties MemberOf | Select-Object -ExpandProperty MemberOf # Use LCM username without domain prefix
+```
+If the output has something similar to `CN="...protectedusers..."` the LCM user is part of the "Protected Users" group. If both validations passed, follow the mitigation below.
+### Mitigation
+The LCM user must be removed from the "Protected Users" group.
