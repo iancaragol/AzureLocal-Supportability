@@ -1,4 +1,4 @@
-# Troubleshoot Azure Local outbound network connectivity
+# Azure Local - Troubleshoot Outbound Network Connectivity
 
 ## Overview
 
@@ -79,7 +79,7 @@ Example output is shown in the animated GIF image below, which shows an interact
 
 The primary source of information is **copying / exporting the CSV output file** and Transcript file that are saved on the node (_or device running the 'Test-AzureLocalConnectivity' function_) to your laptop or desktop PC to open the CSV output in Excel, or another CSV file viewer.
 
-Click here to [**view an example CSV file output**](./Example_AzureLocal_ConnectivityTest_EastUS_computer-name_2025-04-01-11-15-59.csv)
+Click here to [**view an example CSV file output**](./examples/Example_AzureLocal_ConnectivityTest_EastUS_computer-name_2025-04-01-11-15-59.csv)
 
 ![Test-AzureLocalConnectivity Demo](./images/Test-AzureLocalConnectivity_Demo.gif)
 
@@ -157,7 +157,7 @@ To view the output from Azure Local **Environment Checker** Connectivity Validat
 Invoke-AzStackHciConnectivityValidation -PassThru | Where-Object -Property Status -eq FAILURE | Sort-Object TargetResourceName | Format-Table TargetResourceName -Autosize
 ````
 
-For additional information for how to use Azure Local Environment Checker module, review the [Troubleshooting External Connectivity Failures in Environment Checker](/TSG/EnvironmentValidator/Troubleshooting-External-Connectivity-Failures-in-Environment-Checker.md) article.
+For additional information for how to use Azure Local Environment Checker module, review the [Troubleshooting External Connectivity Failures in Environment Checker](../../EnvironmentValidator/Troubleshooting-External-Connectivity-Failures-in-Environment-Checker.md) article.
 
 And the Microsoft Learn article is here: [Readiness of your environment for Azure Local - "Run readiness checks" section](https://learn.microsoft.com/azure/azure-local/manage/use-environment-checker?view=azloc-24113&tabs=connectivity#run-readiness-checks).
 
