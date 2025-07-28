@@ -170,7 +170,7 @@ This configuration enables the ToR switch to dynamically learn virtual network r
 
 - [Azure Local BGP Routing Configuration][BGP] - Complete BGP configuration for Azure Local environments
 - [Disaggregated Switch Storage Design](./Disaggregated_Switched_Storage.md) - Complete switch configuration guide for Azure Local disaggregated deployments
-- [Layer Forwarding Gateway][RASGateway] - Overview and concepts
+- [Layer Forwarding Gateway][RASGateway] - Layer 3 (L3) forwarding enables connectivity between the physical infrastructure in the datacenter and the virtualized infrastructure in the Hyper-V network virtualization cloud. By using L3 forwarding connection, tenant network VMs can connect to a physical network through the SDN gateway, which is already configured in the SDN environment. In this case, the SDN gateway acts as a router between the virtualized network and the physical network.
 
 [BGP]: ./azurelocal-bgp.md "BGP routing configuration for Azure Local environments, including iBGP and eBGP setup, route filtering, and load balancing for both hyper-converged and disaggregated deployments."
 [RASGateway]: https://learn.microsoft.com/en-us/azure/azure-local/concepts/gateway-overview?#layer-3-forwarding "Layer 3 (L3) forwarding enables connectivity between the physical infrastructure in the datacenter and the virtualized infrastructure in the Hyper-V network virtualization cloud. By using L3 forwarding connection, tenant network VMs can connect to a physical network through the SDN gateway, which is already configured in the SDN environment. In this case, the SDN gateway acts as a router between the virtualized network and the physical network."
