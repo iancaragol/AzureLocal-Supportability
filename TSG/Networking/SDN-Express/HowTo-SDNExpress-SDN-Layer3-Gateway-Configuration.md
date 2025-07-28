@@ -73,9 +73,15 @@ A BGP neighbor is defined using the 10.101.177.0/24 subnet, which corresponds to
 
 ![Layer 3 Forwarding Gateway Diagram](https://learn.microsoft.com/en-us/azure/azure-local/concepts/media/gateway-overview/layer-3-forwarding-example.png)
 
-There are two primary methods for supporting [Layer 3 Forwarding Gateways](https://learn.microsoft.com/en-us/azure/azure-local/manage/gateway-connections?view=azloc-2505#create-an-l3-connection) in Azure Local configurations: BGP and static routing.
+The recommended approach for [Layer 3 Forwarding Gateways](https://learn.microsoft.com/en-us/azure/azure-local/manage/gateway-connections?view=azloc-2505#create-an-l3-connection) in Azure Local is BGP-based dynamic routing with a required static route to enable BGP session establishment. This approach combines the flexibility of dynamic routing with the precision of targeted static routing.
 
-With BGP, the Layer 3 Gateway establishes a BGP session with the ToR switch and advertises its V-NET routes directly into the ToR routing table. This dynamic approach allows the routing table to be automatically updated as new networks are added or removed, reducing manual intervention and supporting scalable, automated network operations.
+With this configuration, the Layer 3 Gateway operates using dual address spaces:
+- **Provider address** (15.0.0.5 in VLAN 10) - The physical-facing IP that connects to the ToR switch
+- **Customer address** (10.0.1.6/32) - The internal BGP endpoint that exists within the SDN virtual network
+
+The Layer 3 Gateway establishes a BGP session from its customer address (10.0.1.6) to the ToR switch and advertises its virtual network routes directly into the ToR routing table. This dynamic approach allows the routing table to be automatically updated as virtual networks are added or removed, reducing manual intervention and supporting scalable, automated network operations.
+
+A static route on the ToR switch (`ip route 10.0.1.6/32 15.0.0.5`) is essential to enable BGP connectivity, as it provides the path between the physical network and the virtual BGP endpoint inside the SDN environment.
 
 **Cisco Nexus 93180YC-FX Configuration:**
 
