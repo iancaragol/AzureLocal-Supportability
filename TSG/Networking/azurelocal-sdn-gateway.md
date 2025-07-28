@@ -23,7 +23,7 @@ This SDN gateway configuration applies to both Azure Local deployment patterns:
 
 The gateway configurations leverage the existing compute network infrastructure (VLAN 8 in the reference examples) while maintaining isolation from storage networks, which always remain at Layer 2 using RDMA protocols.
 
-## Example SDN configuration
+## SDN configuration
 
 This section of the BGP configuration is tailored to support an [Azure Local SDN](https://learn.microsoft.com/en-us/azure/azure-local/manage/load-balancers) scenario using VLAN8.
 
@@ -76,8 +76,6 @@ A BGP neighbor is defined using the 10.101.177.0/24 subnet, which corresponds to
 There are two primary methods for supporting [Layer 3 Forwarding Gateways](https://learn.microsoft.com/en-us/azure/azure-local/manage/gateway-connections?view=azloc-2505#create-an-l3-connection) in Azure Local configurations: BGP and static routing.
 
 With BGP, the Layer 3 Gateway establishes a BGP session with the ToR switch and advertises its V-NET routes directly into the ToR routing table. This dynamic approach allows the routing table to be automatically updated as new networks are added or removed, reducing manual intervention and supporting scalable, automated network operations.
-
-### BGP Mode
 
 **Cisco Nexus 93180YC-FX Configuration:**
 
@@ -170,7 +168,9 @@ This configuration enables the ToR switch to dynamically learn virtual network r
 
 - [Azure Local BGP Routing Configuration][BGP] - Complete BGP configuration for Azure Local environments
 - [Disaggregated Switch Storage Design](./Disaggregated_Switched_Storage.md) - Complete switch configuration guide for Azure Local disaggregated deployments
+- [Azure Local Software Load Balancer][SDN] - Manage Software Load Balancer for SDN
 - [Layer Forwarding Gateway][RASGateway] - Layer 3 (L3) forwarding enables connectivity between the physical infrastructure in the datacenter and the virtualized infrastructure in the Hyper-V network virtualization cloud. By using L3 forwarding connection, tenant network VMs can connect to a physical network through the SDN gateway, which is already configured in the SDN environment. In this case, the SDN gateway acts as a router between the virtualized network and the physical network.
 
 [BGP]: ./azurelocal-bgp.md "BGP routing configuration for Azure Local environments, including iBGP and eBGP setup, route filtering, and load balancing for both hyper-converged and disaggregated deployments."
 [RASGateway]: https://learn.microsoft.com/en-us/azure/azure-local/concepts/gateway-overview?#layer-3-forwarding "Layer 3 (L3) forwarding enables connectivity between the physical infrastructure in the datacenter and the virtualized infrastructure in the Hyper-V network virtualization cloud. By using L3 forwarding connection, tenant network VMs can connect to a physical network through the SDN gateway, which is already configured in the SDN environment. In this case, the SDN gateway acts as a router between the virtualized network and the physical network."
+[SDN]: https://learn.microsoft.com/en-us/azure/azure-local/manage/load-balancers "Software Load Balancer (SLB) policies using Windows Admin Center after you deploy Software Defined Networking (SDN). SLBs are used to evenly distribute network traffic among multiple resources. SLB enables multiple machines to host the same workload, providing high availability and scalability. You can create load balancers for your workloads hosted on traditional VLAN networks (SDN logical networks) as well as for workloads hosted on SDN virtual networks."
