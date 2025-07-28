@@ -150,7 +150,7 @@ Based on the [Layer 3 forwarding example](https://learn.microsoft.com/en-us/azur
   Sets a safeguard by issuing a warning if the number of received prefixes approaches 12,000. This helps prevent routing table overload and maintains network stability.
 
 - `ip route 10.0.1.6/32 15.0.0.5`
-  This static route enables the ToR switch to reach the BGP endpoint IP address (10.0.1.6/32) through the gateway node's Layer 2 interface (15.0.0.5) on VLAN10. This route is essential for BGP session establishment and must be configured before attempting BGP peering.
+  This static route enables the ToR switch to reach the BGP endpoint IP address (10.0.1.6/32) through the gateway node's provider address (15.0.0.5) on VLAN10. This route is essential for BGP session establishment because 10.0.1.6 exists in the customer address space (internal to the SDN virtual network) and is not directly reachable without this static route pointing through the gateway's provider address.
 
 **Deployment Coordination Requirements:**
 
