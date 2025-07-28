@@ -11,7 +11,6 @@ Azure Local SDN gateway functionality enables connectivity between virtual netwo
 - **Layer 3 Forwarding**: Provides routing between SDN virtual networks and external physical networks
 - **Load Balancer Integration**: Supports Azure Local Software Load Balancer (SLBMUX) for traffic distribution
 - **Dynamic Routing**: Uses BGP for automatic route advertisement and learning
-- **Static Routing**: Supports manual route configuration for controlled environments
 - **Multi-Tenant Support**: Enables isolated networking for different workloads and tenants
 
 ### Configuration Applicability
@@ -26,7 +25,8 @@ The gateway configurations leverage the existing compute network infrastructure 
 
 ## Example SDN configuration
 
-This section of the BGP configuration is tailored to support an [Azure Local SDN](https://learn.microsoft.com/en-us/azure/azure-local/manage/load-balancers) scenario using VLAN8. 
+This section of the BGP configuration is tailored to support an [Azure Local SDN](https://learn.microsoft.com/en-us/azure/azure-local/manage/load-balancers) scenario using VLAN8.
+
 For complete BGP routing configuration details, including iBGP setup and route filtering, see the [Azure Local BGP Routing Configuration][BGP] document.
 
 **Dynamic BGP Neighbor Definition**:
@@ -62,70 +62,106 @@ A BGP neighbor is defined using the 10.101.177.0/24 subnet, which corresponds to
 
 ## Layer 3 Forwarding Gateway
 
+![Layer 3 Forwarding Gateway Diagram](https://learn.microsoft.com/en-us/azure/azure-local/concepts/media/gateway-overview/layer-3-forwarding-example.png)
+
 There are two primary methods for supporting [Layer 3 Forwarding Gateways](https://learn.microsoft.com/en-us/azure/azure-local/manage/gateway-connections?view=azloc-2505#create-an-l3-connection) in Azure Local configurations: BGP and static routing.
 
 With BGP, the Layer 3 Gateway establishes a BGP session with the ToR switch and advertises its V-NET routes directly into the ToR routing table. This dynamic approach allows the routing table to be automatically updated as new networks are added or removed, reducing manual intervention and supporting scalable, automated network operations.
 
-In contrast, static routing requires the Forwarding Gateway to be a member of the VLAN, with the ToR switch manually configured with static routes for each required network. This method is more manual and requires the network team to update the ToR configuration whenever new internal networks are introduced. While BGP is recommended for environments that require flexibility and automation, static routing may be preferred in scenarios where a controlled, predictable routing configuration is needed.
-
-For both methods, the subnet used for the gateway can be much smaller than the examples shown—typically as small as a /30 or /28, depending on the number of required IP addresses.
-
 ### BGP Mode
 
-As mentioned above, BGP provides a dynamic way to add internal networks to the ToR switch routing table. When an administrator adds new networks in the portal, the Layer 3 Gateway advertises these networks to the switch using BGP, allowing the routing table to update automatically.
+**Cisco Nexus 93180YC-FX Configuration:**
 
-In the sample configuration below
+```console
 
-- `neighbor 10.101.177.0/24`  
-  Defines the BGP neighbor as the entire 10.101.177.0/24 subnet, which is associated with VLAN8. This allows any device within that subnet—such as a Layer 3 Gateway VM to establish a BGP session with the switch, provided it matches the remote AS number.
+!!! Vlan 10
+interface Vlan10
+  description L3 Forward Gateway10
+  no shutdown
+  mtu 9216
+  no ip redirects
+  ip address 15.0.0.2/29
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 7
+    priority 150 forwarding-threshold lower 1 upper 150
+    ip 15.0.0.1
+
+!!! Prefix list update
+ip prefix-list BlockSDNDefault seq 10 deny 0.0.0.0/0
+ip prefix-list BlockSDNDefault seq 20 permit 0.0.0.0/0 le 32
+
+!!! BGP snip
+    neighbor 10.0.1.6/32
+      remote-as 65158
+      description TO_L3ForwarderGateway
+      update-source Vlan10
+      ebgp-multihop 5
+      address-family ipv4 unicast
+        prefix-list DefaultRoute out
+        prefix-list BlockSDNDefault in
+        maximum-prefix 12000 warning-only
+
+!!! Add required static route to connect to the BGP Gateway
+ip route  10.0.1.6/32 15.0.0.5
+```
+
+As mentioned above, BGP provides a dynamic way to add internal virtual networks to the ToR switch routing table. When an administrator adds new networks in the Azure Local portal, the Layer 3 Gateway advertises these networks to the switch using BGP, allowing the routing table to update automatically.
+
+The Layer 3 forwarding gateway configuration requires coordination between the Azure Local administrator and the network administrator to establish proper connectivity. The configuration involves multiple IP addresses and network segments that must be properly aligned.
+
+**Network Architecture Overview:**
+
+Based on the [Layer 3 forwarding example](https://learn.microsoft.com/en-us/azure/azure-local/concepts/media/gateway-overview/layer-3-forwarding-example.png), the configuration implements:
+
+- **VLAN 10**: Dedicated gateway subnet (15.0.0.0/29) for Layer 3 forwarding connectivity
+- **Gateway IP**: 15.0.0.1 (HSRP virtual IP providing high availability)
+- **Node Host IP**: 15.0.0.5 (Layer 2 extension point on VLAN 10)
+- **BGP Endpoint**: 10.0.1.6/32 (BGP peering address for the forwarding gateway)
+
+**Configuration Parameters:**
+
+- `neighbor 10.0.1.6/32`  
+  Defines the BGP neighbor using the gateway's BGP peering IP address. This IP address (10.0.1.6/32 in this example) is customer-defined and must be coordinated between the Azure Local administrator and network administrator during deployment planning.
 
 - `remote-as 65158`  
-  Specifies the remote Autonomous System (AS) number that the switch will allow to form a BGP session. In this case, the remote AS is set to 65158, which should match the AS number configured on the Gateway VM. Only eBGP sessions are supported in this configuration.
+  Specifies the remote Autonomous System (AS) number that the switch will allow to form a BGP session. In this case, the remote AS is set to 65158, which must match the AS number configured on the Layer 3 Gateway VM. Only eBGP sessions are supported in this configuration.
 
-- `update-source Vlan8`  
-  Ensures that BGP peering uses the VLAN8 interface as the source IP address. The source IP can be any address assigned to the VLAN8 configuration. Refer to the VLAN section above for more details.
+- `update-source Vlan10`  
+  Ensures that BGP peering uses the VLAN10 interface (15.0.0.2) as the source IP address for BGP session establishment. VLAN10 provides the Layer 2 extension between the ToR switch and the gateway node.
 
 - `ebgp-multihop 5`  
-  Allows the BGP session to be established even if the Gateway VM is up to five hops away from the switch. This is useful in scenarios where the VM is not directly connected.
+  Allows the BGP session to be established even if the Gateway VM is up to five hops away from the switch. This accommodates the routing path from the switch through VLAN10 to reach the internal BGP endpoint.
 
 - `prefix-list DefaultRoute out`  
-  Within the IPv4 unicast address family, this command restricts the switch to only advertise the default route (0.0.0.0/0) to the Layer 3 Gateway. The Gateway VM must receive at least the default route from the ToR switch.
+  Within the IPv4 unicast address family, this command restricts the switch to only advertise the default route (0.0.0.0/0) to the Layer 3 Gateway. The Gateway VM requires the default route from the ToR switch to provide external connectivity for internal virtual networks.
+
+- `prefix-list BlockSDNDefault in`
+  Within the IPv4 unicast address family, this command prevents the switch from accepting default route advertisements (0.0.0.0/0) from the Layer 3 Gateway. This security measure ensures that SDN services cannot become the default gateway for the Azure Local environment, while still allowing the gateway to advertise more specific routes for internal virtual networks. Any default route received from the gateway will be filtered out before being installed in the switch's routing table.
 
 - `maximum-prefix 12000 warning-only`  
   Sets a safeguard by issuing a warning if the number of received prefixes approaches 12,000. This helps prevent routing table overload and maintains network stability.
 
-This configuration enables the ToR switch to dynamically learn and advertise routes as the network evolves, reducing manual intervention and supporting scalable, automated network operations.
+- `ip route 10.0.1.6/32 15.0.0.5`
+  This static route enables the ToR switch to reach the BGP endpoint IP address (10.0.1.6/32) through the gateway node's Layer 2 interface (15.0.0.5) on VLAN10. This route is essential for BGP session establishment and must be configured before attempting BGP peering.
 
-**Cisco Nexus 93180YC-FX Configuration:**
+**Deployment Coordination Requirements:**
 
-```console
-    neighbor 10.101.177.0/24
-      remote-as 65158
-      description TO_L3Forwarder
-      update-source Vlan8
-      ebgp-multihop 5
-      address-family ipv4 unicast
-        prefix-list DefaultRoute out
-        maximum-prefix 12000 warning-only
-```
+The following IP addresses and network parameters must be coordinated between Azure Local and network administrators:
 
-### Static Mode
+1. **VLAN10 Subnet**: 15.0.0.0/29 (provides 6 usable IP addresses)
+2. **Gateway Virtual IP**: 15.0.0.1 (HSRP virtual IP on both ToR switches)
+3. **Node Host IP**: 15.0.0.5 (configured on the gateway node during Azure Local deployment)
+4. **BGP Endpoint IP**: 10.0.1.6/32 (internal IP for BGP peering, customer-defined)
+5. **AS Numbers**: Remote AS 65158 must match the gateway VM configuration
 
-In static routing mode, the network team must plan in advance which subnet will be used by the V-NET and which IP address will serve as the gateway for internal routing. For example, in the configuration below, 10.101.177.226 is designated as the gateway VM. This IP address acts as the Layer 3 peering point with the ToR switch and serves as the gateway to the internal subnet 10.68.239.0/24.
-
-It is recommended to configure the required static routes on the ToR switch before deploying the gateway VM. If additional internal networks are needed in the future, the ToR configuration must be updated to include static routes for those networks prior to their deployment. This ensures that traffic destined for the internal subnet is correctly forwarded to the gateway VM, supporting seamless connectivity within the larger Azure Local environment.
-
-This approach is particularly useful in environments where dynamic routing protocols like BGP are not used, or where a more controlled, manual routing configuration is preferred.
-
-**Cisco Nexus 93180YC-FX Configuration:**
-
-```console
-  ip route 10.101.177.226/32 10.68.239.0/24
-```
+This configuration enables the ToR switch to dynamically learn virtual network routes from Azure Local SDN while maintaining proper security boundaries and routing control.
 
 ## Related Documentation
 
 - [Azure Local BGP Routing Configuration][BGP] - Complete BGP configuration for Azure Local environments
 - [Disaggregated Switch Storage Design](./Disaggregated_Switched_Storage.md) - Complete switch configuration guide for Azure Local disaggregated deployments
+- [Layer Forwarding Gateway][RASGateway] - Overview and concepts
 
 [BGP]: ./azurelocal-bgp.md "BGP routing configuration for Azure Local environments, including iBGP and eBGP setup, route filtering, and load balancing for both hyper-converged and disaggregated deployments."
+[RASGateway]: https://learn.microsoft.com/en-us/azure/azure-local/concepts/gateway-overview?#layer-3-forwarding "Layer 3 (L3) forwarding enables connectivity between the physical infrastructure in the datacenter and the virtualized infrastructure in the Hyper-V network virtualization cloud. By using L3 forwarding connection, tenant network VMs can connect to a physical network through the SDN gateway, which is already configured in the SDN environment. In this case, the SDN gateway acts as a router between the virtualized network and the physical network."
