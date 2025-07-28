@@ -29,7 +29,27 @@ This section of the BGP configuration is tailored to support an [Azure Local SDN
 
 For complete BGP routing configuration details, including iBGP setup and route filtering, see the [Azure Local BGP Routing Configuration][BGP] document.
 
+**Cisco Nexus 93180YC-FX Configuration:**
+
+```console
+!!! Prefix list addition
+ip prefix-list BlockSDNDefault seq 10 deny 0.0.0.0/0
+ip prefix-list BlockSDNDefault seq 20 permit 0.0.0.0/0 le 32
+
+!!! BGP snip
+  neighbor 10.101.177.0/24
+    remote-as 65158
+    description TO_SDN_SLBMUX
+    update-source loopback0
+    ebgp-multihop 3
+    address-family ipv4 unicast
+      prefix-list DefaultRoute out
+      prefix-list BlockSDNDefault in
+      maximum-prefix 12000 warning-only
+```
+
 **Dynamic BGP Neighbor Definition**:
+
 A BGP neighbor is defined using the 10.101.177.0/24 subnet, which corresponds to VLAN8 and is reserved for the SLBMUX. The SLBMUX can use any IP address within this subnet, so the configuration specifies the entire subnet as the neighbor. The remote AS is set to 65158, and the neighbor is labeled TO_SDN_SLBMUX for clarity. When a subnet is used as the BGP neighbor, the switch operates in passive mode and waits for the SLBMUX to initiate the BGP connection.
 
 **Peering and Connectivity**:
@@ -44,21 +64,10 @@ A BGP neighbor is defined using the 10.101.177.0/24 subnet, which corresponds to
   Allows the BGP session to traverse up to three hops, accommodating scenarios where the SLBMUX is not directly connected.
 - `prefix-list DefaultRoute out`
   Within the IPv4 unicast address family for this neighbor, the outbound route policy is governed by the DefaultRoute prefix list. This list is designed to advertise only the default route (0.0.0.0/0) to the SLBMUX. This aligns with the design goal of having the SLBMUX receive only the default route from the switch.
+- `prefix-list BlockSDNDefault in`
+  Within the IPv4 unicast address family, this command prevents the switch from accepting default route advertisements (0.0.0.0/0) from the SLBMUX. This security measure ensures that SDN services cannot become the default gateway for the Azure Local environment, while still allowing the gateway to advertise more specific routes for internal virtual networks. Any default route received from the gateway will be filtered out before being installed in the switch's routing table.
 - `maximum-prefix 12000 warning-only`
   This command serves as a safeguard, issuing warnings if the number of received prefixes approaches a set limit, thereby helping maintain stability in the peer session.
-
-**Cisco Nexus 93180YC-FX Configuration:**
-
-```console
-  neighbor 10.101.177.0/24
-    remote-as 65158
-    description TO_SDN_SLBMUX
-    update-source loopback0
-    ebgp-multihop 3
-    address-family ipv4 unicast
-      prefix-list DefaultRoute out
-      maximum-prefix 12000 warning-only
-```
 
 ## Layer 3 Forwarding Gateway
 
@@ -87,7 +96,7 @@ interface Vlan10
     priority 150 forwarding-threshold lower 1 upper 150
     ip 15.0.0.1
 
-!!! Prefix list update
+!!! Prefix list addition
 ip prefix-list BlockSDNDefault seq 10 deny 0.0.0.0/0
 ip prefix-list BlockSDNDefault seq 20 permit 0.0.0.0/0 le 32
 
