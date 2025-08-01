@@ -1,5 +1,9 @@
 # SBE fails health check with content integrity issues
 
+IMPORTANT Check your Azure local version as the scenarios will differ by version:
+* 2503 and older - can experience all 3 scenarios
+* 2504 and newer - should only experience scenario 2 (do not use the mitigation script!)
+
 # Symptoms
 Once customers invoke `Start-SolutionUpdate` (either with or without `-PrepareOnly`) for an update that includes a new SBE, this may cause the **SBE Test SolutionExtensionModule Health Check** test to fail with an exception message that includes `SolutionExtension content failed integrity check`. Depending on the scenario, this health check failure will be observed in different locations:
 - The (daily) system health check reports the failure - see scenario 1 or 2 below.
@@ -84,10 +88,18 @@ The (daily) system health check runs using the older (installed) SBE files becau
 
 This mismatch of _**old content**_ with _**newer metadata**_ results in a content integrity failure.
 
-# Mitigation Details
-If you have confirmed this issue is only observed in the system health check (scenario 1 or 2 above), you can elect to ignore failure. As soon as the new SBE finishes updating the failure will go away on its own (in the next daily check). To proceed while ignoring the system health check failure you can use `Start-SolutionUpdate` with it's normal syntax.
+# Mitigation Details for Scenario 1
+If you have confirmed this issue is only observed in the system health check (scenario 1), you should ignore the failure. To proceed while ignoring the system health check failure you can use `Start-SolutionUpdate` with it's normal syntax.
 
-Alternatively, for scenario 3, or if you prefer to assure this issue has been resolved before proceeding with the update, you can use the following steps to correct the bad environment variable value.
+# Mitigation Details for Scenario 2
+If this is **Scenario 2** you should just ignore the failure.  As soon as the new SBE finishes updating the failure will go away on its own (in the next daily check).
+
+**DO NOT RUN THE SCRIPT** below as it may cause the current update to fail!
+
+# Mitagation Details for Scenario 3
+If you have confirmed this a a case of scenario 3 you can use the following steps to correct the bad environment variable value.
+
+**Scenario 3 should only be happening on 10.2503.x and older!**  Please double check the scenario details before applying the scenario if you have a newer version installed.
 
 1. Run the script below on any cluster node to reset the environment variable to the default value on all nodes. Specify the normal AD deployment user (the LCM user as prompted during the cloud deployment process).
 
