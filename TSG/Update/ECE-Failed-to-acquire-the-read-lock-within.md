@@ -6,7 +6,7 @@
 
   
 
-This tsg applies to updates from builds lower than 2508 but the most common is builds lower than 2506
+This TSG applies to updates from builds lower than 2508 but the most common is builds lower than 2506
 
   
 
