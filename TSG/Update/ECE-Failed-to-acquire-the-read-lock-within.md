@@ -117,7 +117,7 @@ This is a transient issue where ECE receives too many configuration requests. EC
 
     Example Output:
 
-![image.png](./ExampleCloudDefinitionRetrieved.png)
+![image.png](ExampleCloudDefinitionRetrieved.png)
   
 
 3) If step 2 prints "Cloud definition retrieved: True", then resume the operation that previously failed.
