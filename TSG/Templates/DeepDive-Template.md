@@ -1,13 +1,16 @@
 <!-- 
 DeepDive Template
 - Focus on providing comprehensive understanding of the topic
-- Structure is flexible
 - Replace all [placeholders] with relevant content
+- This template provides a suggested structure - adapt it to make sense for your specific content
+    - The goal is clarity and usability for the reader
 
 Styling
 - Images should be placed in the `./images` folder and referenced
 - Any code block or JSON should be wrapped in triple backticks (```) with language identifier
 - References to Azure Local public documentation should always direct to the latest version
+
+You can use this regex to find placeholders that need to be replaced (search by Regex in your editor): \[([^\]]+)\]
 -->
 # [Title]
 
