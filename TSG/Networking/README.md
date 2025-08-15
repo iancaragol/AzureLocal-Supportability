@@ -28,4 +28,5 @@ For Network Environment Validator Resources, see [TSG/EnvironmentValidator/Netwo
 
 ## Contributing
 
-For contribution guidelines see [CONTRIBUTING.md](CONTRIBUTING.md).
+For component contribution guidelines see [CONTRIBUTING.md](CONTRIBUTING.md).
+For universal contribution guidelines see [Templates/CONTRIBUTING.md](../Templates/CONTRIBUTING.md)
