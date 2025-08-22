@@ -50,7 +50,7 @@ Review the Environment Validator output JSON, here is an example:
   "Status": 1,
   "Severity": 2,
   "Description": "Validates that the Storage adapters on the node do not have Manual/DHCP IP Addresses or VLANID configured. There should not be multiple Storage adapters with the same name on the same node.",
-  "Remediation": "aka.ms/azurelocal/envvalidator/storageadapterreadiness",
+  "Remediation": "https://aka.ms/azurelocal/envvalidator/storageadapterreadiness",
   "TargetResourceID": "AZLOC-NODE1, ethernet 3",
   "TargetResourceName": "AZLOC-NODE1, ethernet 3",
   "TargetResourceType": "StorageAdapter",
