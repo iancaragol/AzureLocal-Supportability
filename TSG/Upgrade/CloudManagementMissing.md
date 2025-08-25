@@ -1,7 +1,7 @@
 # Troubleshooting: Missing Cloud Management Cluster Group in Azure Local
 
 ## Issue
-After Brownfield update in Azure Local from 22H2, if the Cloud Management cluster group is missing, certain cloud management features may not work properly. This typically occurs when the "cluster agent" service is missing or the cluster registration is using an older version.
+After upgrade in Azure Local from 22H2, if the Cloud Management cluster group is missing, certain cloud management features may not work properly. This typically occurs when the "cluster agent" service is missing or the cluster registration is using an older version.
 
 ## Symptoms
 - Cloud Management features are not working as expected
