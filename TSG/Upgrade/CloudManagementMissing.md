@@ -1,7 +1,7 @@
 # Troubleshooting: Missing Cloud Management Cluster Group in Azure Local
 
 ## Issue
-After upgrade in Azure Local from 22H2, if the Cloud Management cluster group is missing, certain cloud management features may not work properly. This typically occurs when the "cluster agent" service is missing or the cluster registration is using an older version.
+In some upgrade scenarios in Azure Local 22H2 -> 23H2 or 22H2 -> 24H2, The Cloud Management cluster group could be missing, certain cloud management features may not work properly. This typically occurs when the "cluster agent" service is missing or the cluster registration is using an older version.
 
 ## Symptoms
 - Cloud Management features are not working as expected
