@@ -1,6 +1,6 @@
 # Contributing to Azure Local Supportability
 
-Welcome! This repository provides troubleshooting guides and documentation for Azure Local. We want to make contributing as simple as possible while maintaining high quality, customer-ready content.
+Welcome! This repository provides troubleshooting guides and documentation for Azure Local.
 
 ## Contribution Process
 
@@ -26,7 +26,7 @@ Does your content not fit any of these categories? Consider creating a new docum
 
 ### Step 2: Identify Component
 
-Put your file in the appropriate component folder:
+Put your file in the appropriate component folder. Here are some examples:
 
 | Component                         | What Goes Here                                   |
 | --------------------------------- | ------------------------------------------------ |
@@ -37,7 +37,7 @@ Put your file in the appropriate component folder:
 | [`Update`](./TSG/Update/)         | Patching, Azure Update Manager                   |
 | [`ArcVMs`](./TSG/ArcVMs/)         | Virtual machine management                       |
 
-[See all components](./README.md#table-of-contents)
+Don't see a component? [See all components](./README.md#table-of-contents)
 
 ### Step 3: Create your document
 
@@ -46,6 +46,7 @@ Put your file in the appropriate component folder:
 3. **Test all code examples** - they must be safe for production
 4. **Save with correct naming**: `<Type>-<Topic>-<Specifics>.md`
 5. **Update the component README.md** to list your new file
+6. **Submit a pull request** with your changes
 
 ## Requirements
 
