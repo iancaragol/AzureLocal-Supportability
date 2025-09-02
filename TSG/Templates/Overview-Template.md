@@ -1,4 +1,4 @@
-<!-- 
+<!--
 Overview Template
 - Overview documents give architectural guidance and conceptual understanding
 - Replace all {placeholders} with relevant content
@@ -14,6 +14,7 @@ Styling
 
 You can use this regex to find placeholders that need to be replaced (search by Regex in your editor): \{([^}]+)\}
 -->
+
 # {Title}
 
 _{Brief subtitle or description that summarizes the document's purpose and scope}_
@@ -35,8 +36,9 @@ _{Brief subtitle or description that summarizes the document's purpose and scope
 {Introduction explaining what this overview covers, who should read it, and how it fits into the broader Azure Local ecosystem}
 
 This guide complements the official Azure Local documentation and provides practical guidance with focus on:
+
 - {Key focus area 1}
-- {Key focus area 2}  
+- {Key focus area 2}
 - {Key focus area 3}
 - {Key focus area 4}
 
@@ -44,8 +46,8 @@ This guide complements the official Azure Local documentation and provides pract
 
 {Optional section - include if there are important terms that readers need to understand}
 
-| Term | Definition |
-|------|------------|
+| Term         | Definition         |
+| ------------ | ------------------ |
 | **{Term 1}** | {Clear definition} |
 | **{Term 2}** | {Clear definition} |
 | **{Term 3}** | {Clear definition} |
@@ -62,7 +64,7 @@ This guide complements the official Azure Local documentation and provides pract
 
 ![Diagram Description](images/{diagram-filename}.png)
 
-### {Subtopic 2}  
+### {Subtopic 2}
 
 {Additional architectural concepts or guidance}
 
@@ -70,11 +72,11 @@ This guide complements the official Azure Local documentation and provides pract
 
 {Use tables to compare different approaches, patterns, or options}
 
-| {Approach/Pattern} | {Criteria 1} | {Criteria 2} | {Primary Use Cases} |
-|-------------------|--------------|--------------|-------------------|
-| **{Option 1}** | {Description} | {Description} | {When to use} |
-| **{Option 2}** | {Description} | {Description} | {When to use} |
-| **{Option 3}** | {Description} | {Description} | {When to use} |
+| {Approach/Pattern} | {Criteria 1}  | {Criteria 2}  | {Primary Use Cases} |
+| ------------------ | ------------- | ------------- | ------------------- |
+| **{Option 1}**     | {Description} | {Description} | {When to use}       |
+| **{Option 2}**     | {Description} | {Description} | {When to use}       |
+| **{Option 3}**     | {Description} | {Description} | {When to use}       |
 
 ---
 
@@ -84,8 +86,8 @@ This guide complements the official Azure Local documentation and provides pract
 
 {Section covering important requirements, constraints, or considerations}
 
-| Requirement | {Details} | Notes |
-|-------------|-----------|--------|
+| Requirement         | {Details}       | Notes                |
+| ------------------- | --------------- | -------------------- |
 | **{Requirement 1}** | {Specification} | {Additional context} |
 | **{Requirement 2}** | {Specification} | {Additional context} |
 
@@ -115,10 +117,12 @@ This guide complements the official Azure Local documentation and provides pract
 {Clear answer with practical guidance}
 
 **{Scenario/Option 1}:**
+
 - {Specific guidance for this scenario}
 - {Key considerations}
 
 **{Scenario/Option 2}:**
+
 - {Alternative guidance}
 - {When this applies}
 
@@ -127,6 +131,7 @@ This guide complements the official Azure Local documentation and provides pract
 For comprehensive {topic area} guidance, refer to these official Microsoft documentation resources:
 
 ### Official Documentation
+
 - **{Official Doc 1}(link)**  
   {Brief description of what this covers}
 
@@ -137,10 +142,12 @@ For comprehensive {topic area} guidance, refer to these official Microsoft docum
   {Brief description of what this covers}
 
 ### Related Documents
+
 - **{Related Doc 1}(link)** - {Brief description}
 - **{Related Doc 2}(link)** - {Brief description}
 
 ### Tools and Utilities
+
 - **{Tool 1}(link)** - {Description of tool and its purpose}
 - **{Tool 2}(link)** - {Description of tool and its purpose}
 

@@ -1,4 +1,4 @@
-<!-- 
+<!--
 Troubleshoot Template
 - Focus on providing systematic troubleshooting guidance for specific issues
 - Replace all {placeholders} with relevant content
@@ -16,6 +16,7 @@ Coding Standards
 
 You can use this regex to find placeholders that need to be replaced (search by Regex in your editor): \{([^}]+)\}
 -->
+
 # {Issue Title}
 
 <table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse; margin-bottom:1em;">
@@ -47,11 +48,13 @@ You can use this regex to find placeholders that need to be replaced (search by 
 
 **Common error messages:**
 {Include specific error messages users might see}
+
 ```
 {Error message example}
 ```
 
 **Observable behaviors:**
+
 - {Symptom 1}
 - {Symptom 2}
 
@@ -62,7 +65,9 @@ You can use this regex to find placeholders that need to be replaced (search by 
 ## Resolution
 
 ### Prerequisites
+
 {Any requirements before starting - skip if none}
+
 - {Prerequisite 1}
 - {Prerequisite 2}
 
@@ -70,16 +75,18 @@ You can use this regex to find placeholders that need to be replaced (search by 
 
 1. **{Action}**
    {action description, what are we doing, and why?}
+
    ```powershell
    # Verify current state first
    {Verification command}
-   
+
    # Perform fix
    {Fix command}
    ```
 
 2. **{Next action}**
    {action description, what are we doing, and why?}
+
    ```powershell
    {Command}
    ```

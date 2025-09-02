@@ -1,4 +1,4 @@
-<!-- 
+<!--
 Reference Template
 - Focus on providing configuration guidance, technical specifications, and examples
 - Reference documents help readers understand what needs to be configured and what's possible
@@ -15,6 +15,7 @@ Styling
 
 You can use this regex to find placeholders that need to be replaced (search by Regex in your editor): \{([^}]+)\}
 -->
+
 # {Title}
 
 <table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse; margin-bottom:1em;">
@@ -39,13 +40,17 @@ You can use this regex to find placeholders that need to be replaced (search by 
 ## Scope
 
 ### In Scope
+
 {What configurations, scenarios, or deployment patterns this reference covers}
+
 - {Configuration type 1}
 - {Scenario 1}
 - {Deployment pattern 1}
 
 ### Out of Scope
+
 {What is not covered by this reference - helps set expectations}
+
 - {Configuration type not covered}
 - {Scenario not applicable}
 
@@ -53,14 +58,15 @@ You can use this regex to find placeholders that need to be replaced (search by 
 
 {Technical requirements, prerequisites, or constraints that apply to the configurations in this reference}
 
-| Requirement | Specification | Notes |
-|-------------|---------------|--------|
+| Requirement     | Specification   | Notes                |
+| --------------- | --------------- | -------------------- |
 | {Requirement 1} | {Specification} | {Additional context} |
 | {Requirement 2} | {Specification} | {Additional context} |
 
 ## Table of Contents
 
 {Update Table of Contents as needed - organize sections to best serve your readers}
+
 - [Overview](#overview)
 - [Scope](#scope)
 - [Requirements](#requirements)
@@ -86,6 +92,7 @@ You can use this regex to find placeholders that need to be replaced (search by 
 ```
 
 **Key Parameters:**
+
 - `{parameter1}`: {Description and purpose}
 - `{parameter2}`: {Description and purpose}
 
@@ -106,10 +113,12 @@ You can use this regex to find placeholders that need to be replaced (search by 
 {Description of the scenario this example addresses}
 
 **Environment:**
+
 - {Environment detail 1}
 - {Environment detail 2}
 
 **Configuration:**
+
 ```console
 {Complete configuration example}
 ```
@@ -132,6 +141,7 @@ You can use this regex to find placeholders that need to be replaced (search by 
 ```
 
 **Expected Output:**
+
 ```console
 {sample of expected output}
 ```
@@ -144,15 +154,16 @@ You can use this regex to find placeholders that need to be replaced (search by 
 
 {Optional section - use when comparing different configuration options}
 
-| Feature | {Option 1} | {Option 2} | {Option 3} |
-|---------|------------|------------|------------|
-| {Feature 1} | {Value} | {Value} | {Value} |
-| {Feature 2} | {Value} | {Value} | {Value} |
-| {Use Case} | {When to use} | {When to use} | {When to use} |
+| Feature     | {Option 1}    | {Option 2}    | {Option 3}    |
+| ----------- | ------------- | ------------- | ------------- |
+| {Feature 1} | {Value}       | {Value}       | {Value}       |
+| {Feature 2} | {Value}       | {Value}       | {Value}       |
+| {Use Case}  | {When to use} | {When to use} | {When to use} |
 
 ## Related Documentation
 
 {Links to related documents, official documentation, and additional resources}
+
 - {Related document 1}(link) - Brief description
 - {Related document 2}(link) - Brief description
 - {Official documentation}(link) - Brief description

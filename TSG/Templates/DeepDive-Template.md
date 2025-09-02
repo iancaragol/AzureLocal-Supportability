@@ -1,4 +1,4 @@
-<!-- 
+<!--
 DeepDive Template
 - Focus on providing comprehensive understanding of the topic
 - Replace all {placeholders} with relevant content
@@ -12,6 +12,7 @@ Styling
 
 You can use this regex to find placeholders that need to be replaced (search by Regex in your editor): \{([^}]+)\}
 -->
+
 # {Title}
 
 <table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse; margin-bottom:1em;">
@@ -32,6 +33,7 @@ You can use this regex to find placeholders that need to be replaced (search by 
 ## Table of Contents
 
 {Update Table of Contents as needed}
+
 - {Deep Dive Area 1}
 
 ## {Deep Dive Topic}

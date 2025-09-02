@@ -7,30 +7,35 @@ This document provides copy-paste snippets for common formatting elements used i
 ## Alert & Emphasis Boxes
 
 ### Important Information
+
 ```markdown
 > [!IMPORTANT]
 > This is critical information that readers must understand before proceeding.
 ```
 
 ### Warning Messages
+
 ```markdown
 > [!WARNING]
 > This action could cause system downtime or data loss. Proceed with caution.
 ```
 
 ### Helpful Notes
+
 ```markdown
 > [!NOTE]
 > This provides additional context or clarification for the reader.
 ```
 
 ### Helpful Tips
+
 ```markdown
 > [!TIP]
 > This offers a useful suggestion or best practice.
 ```
 
 ### Caution Alerts
+
 ```markdown
 > [!CAUTION]
 > This warns about potential issues or risks to consider.
@@ -47,8 +52,11 @@ This document provides copy-paste snippets for common formatting elements used i
 </div>
 
 ```html
-<div style="border-left: 4px solid #0366d6; padding: 15px; margin: 20px 0; background: rgba(3, 102, 214, 0.1); border-radius: 6px;">
-  <strong>📘 Note:</strong> This is a general note for additional information or clarification on a topic.
+<div
+  style="border-left: 4px solid #0366d6; padding: 15px; margin: 20px 0; background: rgba(3, 102, 214, 0.1); border-radius: 6px;"
+>
+  <strong>📘 Note:</strong> This is a general note for additional information or
+  clarification on a topic.
 </div>
 ```
 
@@ -59,8 +67,11 @@ This document provides copy-paste snippets for common formatting elements used i
 </div>
 
 ```html
-<div style="border-left: 4px solid #f9c74f; padding: 15px; margin: 20px 0; background: rgba(249, 199, 79, 0.1); border-radius: 6px;">
-  <strong>⏳ Waiting Time:</strong> Allow 10–15 minutes for logs to accumulate before proceeding with the next steps.
+<div
+  style="border-left: 4px solid #f9c74f; padding: 15px; margin: 20px 0; background: rgba(249, 199, 79, 0.1); border-radius: 6px;"
+>
+  <strong>⏳ Waiting Time:</strong> Allow 10–15 minutes for logs to accumulate
+  before proceeding with the next steps.
 </div>
 ```
 
@@ -71,8 +82,11 @@ This document provides copy-paste snippets for common formatting elements used i
 </div>
 
 ```html
-<div style="border-left: 4px solid #28a745; padding: 15px; margin: 20px 0; background: rgba(40, 167, 69, 0.1); border-radius: 6px;">
-  <strong>⚠️ Important:</strong> Please ensure you follow the recommended steps carefully to avoid unintended issues.
+<div
+  style="border-left: 4px solid #28a745; padding: 15px; margin: 20px 0; background: rgba(40, 167, 69, 0.1); border-radius: 6px;"
+>
+  <strong>⚠️ Important:</strong> Please ensure you follow the recommended steps
+  carefully to avoid unintended issues.
 </div>
 ```
 
@@ -88,7 +102,9 @@ This document provides copy-paste snippets for common formatting elements used i
 </div>
 
 ```html
-<div style="border-left: 4px solid #dc3545; padding: 15px; margin: 20px 0; background: rgba(220, 53, 69, 0.1); border-radius: 6px;">
+<div
+  style="border-left: 4px solid #dc3545; padding: 15px; margin: 20px 0; background: rgba(220, 53, 69, 0.1); border-radius: 6px;"
+>
   <h4 style="margin-top: 0; color: #dc3545;">Common Causes</h4>
   <ul>
     <li>Potential cause one</li>
@@ -105,8 +121,11 @@ This document provides copy-paste snippets for common formatting elements used i
 </div>
 
 ```html
-<div style="border-left: 4px solid #6f42c1; padding: 12px; margin: 20px 0; background: rgba(111, 66, 193, 0.1); border-radius: 6px; font-size: 0.9em;">
-  <strong>💡 Tip:</strong> This box can provide advanced tips or optional steps for users seeking deeper insights.
+<div
+  style="border-left: 4px solid #6f42c1; padding: 12px; margin: 20px 0; background: rgba(111, 66, 193, 0.1); border-radius: 6px; font-size: 0.9em;"
+>
+  <strong>💡 Tip:</strong> This box can provide advanced tips or optional steps
+  for users seeking deeper insights.
 </div>
 ```
 
@@ -115,6 +134,7 @@ This document provides copy-paste snippets for common formatting elements used i
 ## Code Blocks
 
 ### PowerShell Commands
+
 ````markdown
 ```powershell
 # Description of what this command does
@@ -123,6 +143,7 @@ Get-Process | Where-Object {$_.ProcessName -eq "example"}
 ````
 
 ### Console/Terminal Output
+
 ````markdown
 ```console
 # Network configuration example
@@ -134,6 +155,7 @@ interface Ethernet1/1
 ````
 
 ### JSON Configuration
+
 ````markdown
 ```json
 {
@@ -147,6 +169,7 @@ interface Ethernet1/1
 ````
 
 ### Generic Code Block
+
 ````markdown
 ```
 Generic text or configuration content
@@ -159,20 +182,22 @@ that doesn't fit a specific language
 ## Tables
 
 ### Basic Specifications Table
+
 ```markdown
-| Requirement | Specification | Notes |
-|-------------|---------------|--------|
-| **Component** | Details here | Additional context |
-| **Setting** | Value here | Important considerations |
+| Requirement   | Specification | Notes                    |
+| ------------- | ------------- | ------------------------ |
+| **Component** | Details here  | Additional context       |
+| **Setting**   | Value here    | Important considerations |
 ```
 
 ### Comparison Table
+
 ```markdown
-| Feature | Option 1 | Option 2 | Option 3 |
-|---------|----------|----------|----------|
-| **Performance** | High | Medium | Low |
-| **Complexity** | Low | Medium | High |
-| **Use Case** | Small deployments | Enterprise | Specialized |
+| Feature         | Option 1          | Option 2   | Option 3    |
+| --------------- | ----------------- | ---------- | ----------- |
+| **Performance** | High              | Medium     | Low         |
+| **Complexity**  | Low               | Medium     | High        |
+| **Use Case**    | Small deployments | Enterprise | Specialized |
 ```
 
 ### Metadata Table (for TSG documents)
@@ -200,6 +225,7 @@ that doesn't fit a specific language
   </tr>
 </table>
 ```
+
 ---
 
 ## Emojis
@@ -217,6 +243,7 @@ that doesn't fit a specific language
 ## Quick Reference
 
 **Most Common Elements:**
+
 - `> [!NOTE]` - For additional information
 - `> [!IMPORTANT]` - For critical information
 - `**bold text**` - For emphasis

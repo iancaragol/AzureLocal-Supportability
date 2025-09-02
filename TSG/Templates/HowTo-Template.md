@@ -1,4 +1,4 @@
-<!-- 
+<!--
 HowTo Template
 - Focus on providing clear, actionable step-by-step instructions for management operations
 - Explain the purpose and benefits of following this guide
@@ -14,6 +14,7 @@ Styling
 
 You can use this regex to find placeholders that need to be replaced (search by Regex in your editor): \{([^}]+)\}
 -->
+
 # {Title}
 
 <table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse; margin-bottom:1em;">
@@ -34,26 +35,32 @@ You can use this regex to find placeholders that need to be replaced (search by 
 ## What and Why
 
 ### What This Guide Covers
+
 {Clearly describe what specific configuration, setup, or management task will be completed}
 
 ### Why You Would Use This
+
 {Explain the business/technical reasons for performing this operation}
+
 - {Benefit 1 - e.g., "Enables advanced routing scenarios"}
 - {Benefit 2 - e.g., "Improves network segmentation"}
 - {Use case 1 - e.g., "Required for multi-tenant environments"}
 
 ### When to Use This Guide
+
 {Describe the scenarios or conditions where this configuration is needed}
 
 ## Prerequisites
 
 {List any requirements, permissions, or setup needed before starting}
+
 - {Prerequisite 1}
 - {Prerequisite 2}
 
 ## Table of Contents
 
 {Update Table of Contents as needed}
+
 - [Overview](#overview)
 - [What and Why](#what-and-why)
 - [Prerequisites](#prerequisites)
@@ -67,12 +74,14 @@ You can use this regex to find placeholders that need to be replaced (search by 
 {Brief explanation of what this step accomplishes}
 
 1. {Detailed instruction}
+
    ```powershell
    # Example command with explanation
    Get-Process
    ```
 
 2. {Next instruction}
+
    - {Sub-step or note}
    - {Alternative option if applicable}
 
@@ -98,10 +107,12 @@ You can use this regex to find placeholders that need to be replaced (search by 
 {Common issues and their solutions}
 
 ### {Common Issue 1}
+
 **Symptoms:** {Description of what the user might see}
 **Solution:** {How to resolve it}
 
 ### {Common Issue 2}
+
 **Symptoms:** {Description of what the user might see}
 **Solution:** {How to resolve it}
 
