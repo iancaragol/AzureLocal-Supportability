@@ -2,44 +2,54 @@
 
 This is a public repository for all of Azure Local Troubleshooting guides (TSGs), known issues and reporting feedback - this repo is intended to provide a central location for community driven supportability content. This is the material that is referenced by Customer Support Services when a ticket is created, by Azure Local engineering responding to an incident, and by users when self discovering resolutions to active system issues.
 
-## Folder Structure
+## Documentation Standards
+- Follow one of the Templates defined in the `/TSG/Templates` folder, where applicable
+- Be consistent with existing TSGs and guidance (refer to `CONTRIBUTING.md`)
+- Write in clear, concise technical English with proper headings and organization
+- Use Markdown formatting consistently including tables, callouts, and code blocks
+- README.md files should provide an overview of the folder contents and usage instructions, when adding a new document, the README.md should be updated accordingly.
 
-- `/TSG/<component>`: Contains folders for each major component area
+## Contribution Workflow
+- New files should follow naming convention: <Type>-<Topic>-<Specifics>.md
+- Update component README.md files when adding new content
+- Place images in an images/ subfolder within the relevant component
 
-### Components
-
-- AKS: Azure Kubernetes Service on Azure Local
-- ArcRegistration
-- ArcVMs
-- AVD: Azure Virtual Desktop
-- Cluster Registration
-- Deployment: Azure Local Deployment
-- Environment Validator: Azure Local Environment Validator
-- LCM: Lifecycle Manager
-- Lifecycle: Add Node, Repair Node
-- Networking: Host Networking, TOR Configuration, Software Defined Networking (SDN)
-- Observability: Azure Local Telemetry and Diagnostics Agent
-- Security: Azure Local Security
-- Solution Extension
-- Storage
-- Update: Update Azure Local Solution
-- Upgrade: Upgrade OS Versions
-
-## Coding Standards
-
-This repository should not contain any code files. No .ps1, .psm1, etc. All code should be embedded in the MD file with the correct type. For example:
+## PowerShell Code Guidelines
+When reviewing or suggesting PowerShell code in documentation:
+- Verify code is safe for production environments
+- Implement defensive coding techniques (check conditions before taking action)
+- Include verification steps before and after changes
+- Ensure commands don't disrupt workloads
+- Check for proper error handling
+- Use placeholders like <hostname> instead of hardcoded values
 
 ```powershell
-Get-Process
+Example:
+
+# DANGEROUS EXAMPLE - Could cause outage without warning
+Restart-Service -Name "CriticalService" -Force
+
+# SAFER ALTERNATIVE - Checks status and confirms before action
+$serviceName = "CriticalService"
+$service = Get-Service -Name $serviceName
+Write-Host "Current status of $serviceName is: $($service.Status)"
+
+$confirmation = Read-Host "Are you sure you want to restart $serviceName? (y/n)"
+if ($confirmation -eq 'y') {
+    Write-Host "Restarting $serviceName..."
+    Restart-Service -Name $serviceName
+    
+    # Verify restart was successful
+    $updatedStatus = (Get-Service -Name $serviceName).Status
+    Write-Host "$serviceName status is now: $updatedStatus"
+} else {
+    Write-Host "Restart canceled"
+}
 ```
 
-Any code snippets MUST:
-- Be safe to execute in a production environment (consider any impact to workloads)
-- Should use defensive coding tecniques
-- Should check that the environment is in the expected state before performing the mitigation. For example, check that a Network Adapter is already disabled, before enabling it.
-
-## Documentation Guidelines
-
-All documentation should be clear and concise. It should follow one of the templates defined in `/TSG/Templates`
-
-
+## Document Types
+- Troubleshoot: Helps users fix specific errors (symptoms → root cause → resolution)
+- Reference: Provides configuration examples and settings
+- How-To: Step-by-step instructions for specific tasks
+- Deep Dive: Technical explanations and architecture details
+- Overview: High-level introductions and summaries
