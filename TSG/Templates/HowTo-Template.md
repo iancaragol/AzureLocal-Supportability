@@ -26,6 +26,10 @@ You can use this regex to find placeholders that need to be replaced (search by 
     <th style="text-align:left; width: 180px;">Topic</th>
     <td><strong>{Topic Name}</strong>: {Brief description of the how to}</td>
   </tr>
+  <tr>
+    <th style="text-align:left; width: 180px;">Applicable Scenarios</th>
+    <td><strong>{Applicable Scenarios}</strong>: {List of scenarios this guide applies to}</td>
+  </tr>
 </table>
 
 ## Overview
@@ -36,19 +40,11 @@ You can use this regex to find placeholders that need to be replaced (search by 
 
 ### What This Guide Covers
 
-{Clearly describe what specific configuration, setup, or management task will be completed}
-
-### Why You Would Use This
-
-{Explain the business/technical reasons for performing this operation}
-
-- {Benefit 1 - e.g., "Enables advanced routing scenarios"}
-- {Benefit 2 - e.g., "Improves network segmentation"}
-- {Use case 1 - e.g., "Required for multi-tenant environments"}
+{Clearly describe what specific configuration, setup, or management task is covered by this guide}
 
 ### When to Use This Guide
 
-{Describe the scenarios or conditions where this configuration is needed}
+{Describe the scenarios or conditions under which this guide should be followed}
 
 ## Prerequisites
 
@@ -64,30 +60,15 @@ You can use this regex to find placeholders that need to be replaced (search by 
 - [Overview](#overview)
 - [What and Why](#what-and-why)
 - [Prerequisites](#prerequisites)
-- [Step 1: {Action}](#step-1-action)
-- [Step 2: {Action}](#step-2-action)
+- [{Section 1 Title}](#section-1-title)
 - [Verification](#verification)
 - [Troubleshooting](#troubleshooting)
 
-## Step 1: {Action Description}
+## {Section 1 Title}
 
-{Brief explanation of what this step accomplishes}
+{Brief explanation of this scenario or configuration. Add as many sections as needed. An example might be: 1 Node Cluster vs 4 Node Cluster or Update vs Add Node}
 
-1. {Detailed instruction}
-
-   ```powershell
-   # Example command with explanation
-   Get-Process
-   ```
-
-2. {Next instruction}
-
-   - {Sub-step or note}
-   - {Alternative option if applicable}
-
-3. {Verification step for this section}
-
-## Step 2: {Action Description}
+### Step 1: {Action Description}
 
 {Brief explanation of what this step accomplishes}
 
@@ -95,23 +76,32 @@ You can use this regex to find placeholders that need to be replaced (search by 
 
 2. {Next instruction}
 
-## Verification
+### Step 2: {Action Description}
+
+{Brief explanation of what this step accomplishes}
+
+1. {Detailed instruction}
+
+2. {Next instruction}
+
+### Verification
 
 {Steps to confirm the configuration was completed successfully and is working as expected}
 
 1. {Verification step 1}
+
 2. {Verification step 2}
 
-## Troubleshooting
+### Troubleshooting
 
 {Common issues and their solutions}
 
-### {Common Issue 1}
+#### {Common Issue 1}
 
 **Symptoms:** {Description of what the user might see}
 **Solution:** {How to resolve it}
 
-### {Common Issue 2}
+##### {Common Issue 2}
 
 **Symptoms:** {Description of what the user might see}
 **Solution:** {How to resolve it}

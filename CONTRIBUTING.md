@@ -48,6 +48,8 @@ Don't see a component? [See all components](./README.md#table-of-contents)
 5. **Update the component README.md** to list your new file
 6. **Submit a pull request** with your changes
 
+Reference [Markdown Snippets](./TSG/Templates/Markdown-Snippets.md) for helpful formatting tips, diagrams, and more.
+
 ## Requirements
 
 ### Code Safety (CRITICAL)

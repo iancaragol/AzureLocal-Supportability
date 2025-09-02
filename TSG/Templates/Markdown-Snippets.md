@@ -43,6 +43,54 @@ This document provides copy-paste snippets for common formatting elements used i
 
 ---
 
+## Mermaid Markdown Diagrams and Flow Charts
+
+For consistency and readability in Light and Dark mode, use the following flowchart template.
+
+```mermaid
+flowchart TD
+    %% Basic nodes with different shapes/text formatting
+    Start["Starting Node"]
+    Decision{"Decision Node"}
+    Action["Action Node"]
+    Warning["Warning Node"]
+
+    %% Different types of arrows and labels
+    Start --> Decision                    %% Simple arrow
+    Decision -- "Yes" --> Action         %% Arrow with text
+    Decision --"No"--> Warning           %% Arrow with text (no spaces)
+    Action ==> Warning                    %% Thick arrow
+    Warning -.-> Start                    %% Dotted arrow
+    
+    %% Subgraph example
+    subgraph ProcessGroup
+        direction TB  %% Top to Bottom direction
+        Step1["First Step"]
+        Step2["Second Step"]
+        Step3["Third Step"]
+
+        Step1 --> Step2
+        Step2 --> Step3
+    end
+
+    %% Connection to subgraph
+    Decision --> ProcessGroup
+
+    %% Styling definitions
+    classDef action stroke:#dc2626,stroke-width:3px,fill:none;
+    classDef warning stroke:#ea580c,stroke-width:3px,fill:none;
+    classDef decision stroke:#2563eb,stroke-width:3px,fill:none;
+    classDef success stroke:#059669,stroke-width:3px,fill:none;
+
+    %% Apply styles to nodes
+    class Action action;
+    class Warning warning;
+    class Decision decision;
+    class Start success;
+```
+
+---
+
 ## Advanced HTML Callout Boxes
 
 ### Basic Note Box
@@ -237,20 +285,5 @@ that doesn't fit a specific language
 - 🔧 Requires configuration
 - 📋 Note
 ```
-
----
-
-## Quick Reference
-
-**Most Common Elements:**
-
-- `> [!NOTE]` - For additional information
-- `> [!IMPORTANT]` - For critical information
-- `**bold text**` - For emphasis
-- `` `inline code` `` - For commands or parameters
-- `---` - For section separators
-
-**Regex for Finding Placeholders:**
-`\[([^\]]+)\]` - Use this in your editor to find all bracketed placeholders
 
 ---
