@@ -164,8 +164,8 @@ You can use this regex to find placeholders that need to be replaced (search by 
 
 {Links to related documents, official documentation, and additional resources}
 
-- {Related document 1}(link) - Brief description
-- {Related document 2}(link) - Brief description
-- {Official documentation}(link) - Brief description
+- [{Related document 1}](link) - Brief description
+- [{Related document 2}](link) - Brief description
+- [{Official documentation}](link) - Brief description
 
 ---

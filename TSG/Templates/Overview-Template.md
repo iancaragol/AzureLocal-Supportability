@@ -132,23 +132,23 @@ For comprehensive {topic area} guidance, refer to these official Microsoft docum
 
 ### Official Documentation
 
-- **{Official Doc 1}(link)**  
+- **[{Official Doc 1}](link)**  
   {Brief description of what this covers}
 
-- **{Official Doc 2}(link)**  
+- **[{Official Doc 2}](link)**  
   {Brief description of what this covers}
 
-- **{Official Doc 3}(link)**  
+- **[{Official Doc 3}](link)**  
   {Brief description of what this covers}
 
 ### Related Documents
 
-- **{Related Doc 1}(link)** - {Brief description}
-- **{Related Doc 2}(link)** - {Brief description}
+- **[{Related Doc 1}](link)** - {Brief description}
+- **[{Related Doc 2}](link)** - {Brief description}
 
 ### Tools and Utilities
 
-- **{Tool 1}(link)** - {Description of tool and its purpose}
-- **{Tool 2}(link)** - {Description of tool and its purpose}
+- **[{Tool 1}](link)** - {Description of tool and its purpose}
+- **[{Tool 2}](link)** - {Description of tool and its purpose}
 
 ---
