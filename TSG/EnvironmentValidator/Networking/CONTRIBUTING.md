@@ -11,6 +11,7 @@
 ## File Naming Conventions
 
 Use the following naming schema for new files, use - to separate words:
+
 ```
 Troubleshoot-Network-Test-<validator_name>.md
 ```
@@ -59,27 +60,28 @@ You can also use this section to expand upon different scenarios and configurati
 Review the Environment Validator output JSON. Check the `AdditionalData.Detail` field for summary of which Hosts are not configured properly. You can identify the host by the `TargetResourceID` field.
 
 Here is an example:
+
 ```json
 {
-    "Name": "AzStackHci_Network_Test_HostNetworkConfigurationReadiness",
-    "DisplayName": "Test if host network requirement meets for the deployment on all servers",
-    "Tags": {},
-    "Title": "Test host network configuration readiness",
-    "Status": 1,
-    "Severity": 2,
-    "Description": "Checking host network configuration readiness status on <hostnode>",
-    "Remediation": "Make sure host network configuration readiness is correct. Review detail message to find out the issue.",
-    "TargetResourceID": "<hostnode>",
-    "TargetResourceName": "HostNetworkReadiness",
-    "TargetResourceType": "HostNetworkReadiness",
-    "Timestamp": "\\/Date(timestamp)\\/",
-    "AdditionalData": {
+  "Name": "AzStackHci_Network_Test_HostNetworkConfigurationReadiness",
+  "DisplayName": "Test if host network requirement meets for the deployment on all servers",
+  "Tags": {},
+  "Title": "Test host network configuration readiness",
+  "Status": 1,
+  "Severity": 2,
+  "Description": "Checking host network configuration readiness status on <hostnode>",
+  "Remediation": "Make sure host network configuration readiness is correct. Review detail message to find out the issue.",
+  "TargetResourceID": "<hostnode>",
+  "TargetResourceName": "HostNetworkReadiness",
+  "TargetResourceType": "HostNetworkReadiness",
+  "Timestamp": "\\/Date(timestamp)\\/",
+  "AdditionalData": {
     "Detail": "On <hostnode>:\\nERROR: External VMSwitch ComputeSwitch(compute) is not having any VMNetworkAdapter attached to it.\\nERROR: Please remove the VMSwich, or add at least one VMNetworkAdapter to it.\\nPASS: DNS Client configuration has valid data for all adapters defined in intent\\nPASS: Hyper-V is running correctly on the system\\nPASS: External VMSwitch ConvergedSwitch(managementintent) have 2 VMNetworkAdapter(s) attached to it\\nPASS: At least 1 VMSwitch is having the network adapter defined in the management intent\\nPASS: All adapters defined in intent are physical NICs and Up in the system\\nPASS: Intent ManagementIntent is already defined in the system with same adapter(s)\\nPASS: Intent ComputeIntent is already defined in the system with same adapter(s)\\nPASS: Intent StorageIntent is already defined in the system with same adapter(s)",
     "Status": "FAILURE",
     "TimeStamp": "<timestamp>",
     "Resource": "HostNetworkReadiness configuration status",
     "Source": "<hostnode>"
-    }
+  }
 }
 ```
 
@@ -104,9 +106,11 @@ Add more examples as needed
 !!REMEDIATION_STEP_DESCRIPTION - Explain what the remediation steps are, and why we take them
 
 !!REMEDIATION_STEPS
+
 1. Step 1
-    - Step 1.b
-    - Step 1.a
+
+   - Step 1.b
+   - Step 1.a
 
 2. Step 2
 
