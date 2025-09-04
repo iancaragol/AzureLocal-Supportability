@@ -22,5 +22,5 @@
 * [Update fails with Exception caught in Test-AzStackHciNetwork validator](./Update-fails-with-Exception-caught-in-Test-AzStackHciNetwork-validator.md)
 * [Update CAU run fails 'Previous CAU run status was Canceled'](./Update-CAU-run-fails-previous-CAU-run-status-was-Canceled.md)
 * [Update gets stuck with 'ClearCorruptReports' CAU error ](./Update-gets-stuck-with-ClearCorruptReports-CAU-error.md)
-
 * [ValidateDotNetUpdatesOnCluster wusa.exe process completed with exit code](./ValidateDotNetUpdatesOnCluster-wusa-exit-code.md)
+* [Update service crash or UpdateBootstrap ResetOverrideDiscoveryUri failure](./UpdateService-Crash-on-non-en-US.md)
