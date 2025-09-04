@@ -110,7 +110,7 @@ Invoke-Command -ComputerName $nodes -ScriptBlock $settingsMitigation
 
 2. **Validate update service state**
 
-If the service was continuously crashing and restarting prior to this mitigation, it will be up and running as soon as the script above completes the and Settings.xml file is updated.
+If the service was continuously crashing and restarting prior to this mitigation, it will be up and running as soon as the script above completes and Settings.xml file is updated.
 
 If the service was for some reason no longer being started by the cluster resource, it may need to be manually started. Check the status of the update service cluster group.
 
