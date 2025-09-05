@@ -77,12 +77,14 @@ Format each review comment with:
 
 ## PowerShell Code Guidelines
 When reviewing or suggesting PowerShell code in documentation:
-- Verify code is safe for production environments
-- Implement defensive coding techniques (check conditions before taking action)
-- Include verification steps before and after changes
-- Ensure commands don't disrupt workloads
-- Check for proper error handling
-- Use placeholders like <hostname> instead of hardcoded values
+- Pay special attention to commands that change environment state (e.g., restart, stop, remove, set, write).
+- For state-changing commands:
+  - Verify code is safe for production environments.
+  - Implement defensive coding techniques (check conditions before taking action).
+  - Include verification steps before and after changes.
+  - Ensure commands don't disrupt workloads.
+  - Check for proper error handling.
+  - Use placeholders like <hostname> instead of hardcoded values.
 
 ```powershell
 Example:
