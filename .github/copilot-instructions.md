@@ -86,8 +86,8 @@ When reviewing or suggesting PowerShell code in documentation:
   - Check for proper error handling.
   - Use placeholders like <hostname> instead of hardcoded values.
 
-```powershell
 Example:
+```powershell
 # DANGEROUS EXAMPLE - Could cause an unexpected state
 Restart-Service -Name "CriticalService" -Force
 
@@ -101,6 +101,13 @@ if ($confirmation -eq 'y') {
     Write-Host "Restarting $serviceName..."
     Restart-Service -Name $serviceName
 }
+```
+
+Example:
+```powershell
+# Explictely set ErrorActionPreference
+$ErrorActionPreference = "Stop"
+Get-Service -Name "NonExistentService"
 ```
 
 ## Link Guidelines
