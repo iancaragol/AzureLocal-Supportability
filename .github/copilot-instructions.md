@@ -105,7 +105,7 @@ if ($confirmation -eq 'y') {
 
 Example:
 ```powershell
-# Explictely set ErrorActionPreference
+# Explicitly set ErrorActionPreference
 $ErrorActionPreference = "Stop"
 Get-Service -Name "NonExistentService"
 ```
