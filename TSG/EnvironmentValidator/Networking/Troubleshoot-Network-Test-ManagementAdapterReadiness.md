@@ -26,7 +26,7 @@ At least one adapter assigned to the Management Network Intent must meet the fol
 3. Have a valid DNS server configured
 4. If this is a DHCP deployment, the adapter must be configured to use DHCP, otherwise it must have a static IP configuration.
 
-If any manaagement adapter is part of a VM Switch then the following requirement also applies:
+If any management adapter is part of a VM Switch then the following requirement also applies:
 1. All management adapters must be part of the VM Switch
 2. A management adapter named `vManagement(intentName)` must exist and meet the requirements above.
 
@@ -74,7 +74,7 @@ Note that this validator may report multiple failures in the `Detail` field. Eac
 [FAIL] Adapter [AdapterName] has invalid IP(s): [ip 1] with PrefixOrigin [Dhcp], Adapter [AdapterName 2] has valid IP(s): [ip 2] with PrefixOrigin [Manual].
 ```
 
-**Root Cause:** One of the management adpaters listed does not have a valid IP configuration. If this is a DHCP deployment, the prefix origin must be `Dhcp`. Otherwise, the prefix origin must be `Manual`.
+**Root Cause:** One of the management adapters listed does not have a valid IP configuration. If this is a DHCP deployment, the prefix origin must be `Dhcp`. Otherwise, the prefix origin must be `Manual`.
 
 #### Remediation Steps
 
