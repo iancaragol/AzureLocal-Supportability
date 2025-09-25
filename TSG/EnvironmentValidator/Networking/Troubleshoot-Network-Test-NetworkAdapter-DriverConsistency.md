@@ -73,7 +73,7 @@ Review the Environment Validator output JSON. Check the `AdditionalData.Detail` 
 #### Remediation Steps
 
 1) Check with your hardware vendor to obtain the appropriate drivers for the Network Adapters.
-2) Update the drivers on each Network Adapter in the Network Intent to ensure they all use the same version across all nodes in the cluster. Note that the adapter's in each Network Intent must use the same driver across all nodes.
+2) Update the drivers on each Network Adapter in the Network Intent to ensure they all use the same version across all nodes in the cluster. Note that the adapters in each Network Intent must use the same driver across all nodes.
 
 ### Failure: `[FAIL] IntentName uses multiple driver versions: [Adapter Not Found] (NodeName/AdapterName, ...) ...`
 

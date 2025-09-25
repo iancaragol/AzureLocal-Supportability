@@ -1,8 +1,8 @@
-# AzureLocal_Network_Test_ManagementAdapterReadines
+# AzureLocal_Network_Test_ManagementAdapterReadiness
 <table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse; margin-bottom:1em;">
   <tr>
     <th style="text-align:left; width: 180px;">Name</th>
-    <td><strong>AzureLocal_Network_Test_ManagementAdapterReadines</strong></td>
+    <td><strong>AzureLocal_Network_Test_ManagementAdapterReadiness</strong></td>
   </tr>
   <tr>
     <th style="text-align:left; width: 180px;">Severity</th>

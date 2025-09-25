@@ -1,4 +1,4 @@
-# AzStackHci_Network_Test_StorageAzureLocal_Network_Test_NetworkAdapter_InboxDriverConnections_NoValidationMethod
+# AzureLocal_Network_Test_NetworkAdapter_InboxDriver
 <table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse; margin-bottom:1em;">
   <tr>
     <th style="text-align:left; width: 180px;">Name</th>
@@ -91,4 +91,4 @@ AZLOC-NODE1 (1/2 adapters passed):  ethernet [Microsoft], ethernet 2 [Mellanox T
 
 #### Remediation Steps
 
-1) Check with your hardware vendor to obtain the appropriate drivers for the Network Adapter. Download and install the drivers on the host. Note that the adapter's in each Network Intent must use the same driver across all nodes.
+1) Check with your hardware vendor to obtain the appropriate drivers for the Network Adapter. Download and install the drivers on the host. Note that the adapters in each Network Intent must use the same driver across all nodes.
